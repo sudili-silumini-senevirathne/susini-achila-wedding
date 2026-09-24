@@ -1,34 +1,20 @@
 // =========================================================
 // SUSINI & ACHILA
 // WEDDING INVITATION
+// FULL SCRIPT.JS
 // =========================================================
 
 
 // =========================================================
 // 1. GOOGLE APPS SCRIPT RSVP API
 // =========================================================
-
-// IMPORTANT:
-// Replace this with your REAL Google Apps Script Web App URL.
-//
-// It must end with:
-//
-// /exec
-//
-// Example:
-// https://script.google.com/macros/s/AKfycbxxxxxxxxxxxx/exec
-
 const RSVP_API_URL =
-    "script.google.com/macros/s/AKfycby78MD1C4SLoaTCHyNAsDTxDPlywVJ50zHVVmzzS2KgHtWvWkPDqo7X8XflBPe2SbZw/exec";
-
+    "https://script.google.com/macros/s/AKfycby78MD1C4SLoaTCHyNAsDTxDPlywVJ50zHVVmzzS2KgHtWvWkPDqo7X8XflBPe2SbZw/exec";
 
 
 // =========================================================
 // 2. WEDDING SETTINGS
 // =========================================================
-
-// Sri Lanka timezone:
-// UTC +05:30
 
 const WEDDING_DATE =
     new Date(
@@ -36,10 +22,8 @@ const WEDDING_DATE =
     );
 
 
-
 const CHURCH_MAP_URL =
     "https://www.google.com/maps/search/?api=1&query=St.+Jude%27s+Church+Daluwakotuwa+Sri+Lanka";
-
 
 
 const HOTEL_MAP_URL =
@@ -52,95 +36,56 @@ const HOTEL_MAP_URL =
 // =========================================================
 
 const cover =
-    document.getElementById(
-        "cover"
-    );
+    document.getElementById("cover");
 
 
 const openButton =
-    document.getElementById(
-        "openInvitation"
-    );
+    document.getElementById("openInvitation");
 
 
 const guestNameElement =
-    document.getElementById(
-        "guestName"
-    );
+    document.getElementById("guestName");
 
 
 const rsvpName =
-    document.getElementById(
-        "rsvpName"
-    );
+    document.getElementById("rsvpName");
 
 
 const guestCount =
-    document.getElementById(
-        "guestCount"
-    );
+    document.getElementById("guestCount");
 
 
 const guestCountGroup =
-    document.getElementById(
-        "guestCountGroup"
-    );
+    document.getElementById("guestCountGroup");
 
 
 const rsvpForm =
-    document.getElementById(
-        "rsvpForm"
-    );
+    document.getElementById("rsvpForm");
 
 
 const formResult =
-    document.getElementById(
-        "formResult"
-    );
+    document.getElementById("formResult");
 
 
 const churchLocation =
-    document.getElementById(
-        "churchLocation"
-    );
+    document.getElementById("churchLocation");
 
 
 const hotelLocation =
-    document.getElementById(
-        "hotelLocation"
-    );
+    document.getElementById("hotelLocation");
 
 
 const addToCalendar =
-    document.getElementById(
-        "addToCalendar"
-    );
+    document.getElementById("addToCalendar");
 
 
 const submitButton =
-    rsvpForm.querySelector(
-        ".submit-button"
-    );
+    rsvpForm.querySelector(".submit-button");
 
 
 
 // =========================================================
 // 4. READ URL PARAMETERS
-// =========================================================
-//
-// Example:
-//
-// ?i=431E0FF70B
-// &n=TWlzcy5TdWRpbGkgU2VuZXZpcmF0aG5l
-// &max=1
-//
-// i   = Invitation ID
-// n   = Encoded guest name
-// max = Maximum guests
-//
-// Plain name is also supported:
-//
-// ?name=Miss%20Sudili
 // =========================================================
 
 const params =
@@ -182,11 +127,10 @@ let maxGuests =
     Number.isInteger(
         maxGuestsParameter
     )
-        &&
-        maxGuestsParameter > 0
+    &&
+    maxGuestsParameter > 0
 
         ? maxGuestsParameter
-
         : 1;
 
 
@@ -211,7 +155,6 @@ function decodeGuestName(value) {
 
                         (
                             "00" +
-
                             character
                                 .charCodeAt(0)
                                 .toString(16)
@@ -287,7 +230,7 @@ rsvpName.value =
 
 
 // =========================================================
-// 9. CREATE MAXIMUM GUEST OPTIONS
+// 9. CREATE GUEST COUNT OPTIONS
 // =========================================================
 
 function createGuestOptions() {
@@ -460,27 +403,19 @@ function startRevealAnimations() {
 // =========================================================
 
 const daysElement =
-    document.getElementById(
-        "days"
-    );
+    document.getElementById("days");
 
 
 const hoursElement =
-    document.getElementById(
-        "hours"
-    );
+    document.getElementById("hours");
 
 
 const minutesElement =
-    document.getElementById(
-        "minutes"
-    );
+    document.getElementById("minutes");
 
 
 const secondsElement =
-    document.getElementById(
-        "seconds"
-    );
+    document.getElementById("seconds");
 
 
 const countdownMessage =
@@ -514,21 +449,16 @@ function updateCountdown() {
         now.getTime();
 
 
-    // Wedding date has already passed.
-
     if (difference <= 0) {
 
         daysElement.textContent =
             "00";
 
-
         hoursElement.textContent =
             "00";
 
-
         minutesElement.textContent =
             "00";
-
 
         secondsElement.textContent =
             "00";
@@ -552,15 +482,8 @@ function updateCountdown() {
 
     const days =
         Math.floor(
-
-            totalSeconds
-            /
-            (
-                60 *
-                60 *
-                24
-            )
-
+            totalSeconds /
+            (60 * 60 * 24)
         );
 
 
@@ -568,21 +491,11 @@ function updateCountdown() {
         Math.floor(
 
             (
-                totalSeconds
-                %
-                (
-                    60 *
-                    60 *
-                    24
-                )
+                totalSeconds %
+                (60 * 60 * 24)
             )
-
             /
-
-            (
-                60 *
-                60
-            )
+            (60 * 60)
 
         );
 
@@ -591,49 +504,33 @@ function updateCountdown() {
         Math.floor(
 
             (
-                totalSeconds
-                %
-                (
-                    60 *
-                    60
-                )
+                totalSeconds %
+                (60 * 60)
             )
-
             /
-
             60
 
         );
 
 
     const seconds =
-        totalSeconds
-        %
-        60;
+        totalSeconds % 60;
 
 
     daysElement.textContent =
-        addLeadingZero(
-            days
-        );
+        addLeadingZero(days);
 
 
     hoursElement.textContent =
-        addLeadingZero(
-            hours
-        );
+        addLeadingZero(hours);
 
 
     minutesElement.textContent =
-        addLeadingZero(
-            minutes
-        );
+        addLeadingZero(minutes);
 
 
     secondsElement.textContent =
-        addLeadingZero(
-            seconds
-        );
+        addLeadingZero(seconds);
 
 
     countdownMessage.textContent =
@@ -703,10 +600,9 @@ addToCalendar.addEventListener(
 
     function () {
 
-
         const calendarContent =
 
-            `BEGIN:VCALENDAR
+`BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Susini and Achila Wedding//EN
 CALSCALE:GREGORIAN
@@ -780,7 +676,7 @@ END:VCALENDAR`;
 
 
 // =========================================================
-// 15. RSVP ATTENDANCE SELECTION
+// 15. RSVP ATTENDANCE
 // =========================================================
 
 const attendanceOptions =
@@ -829,7 +725,7 @@ attendanceOptions.forEach(
 
 
 // =========================================================
-// 16. SHOW FORM MESSAGE
+// 16. FORM MESSAGE
 // =========================================================
 
 function showFormMessage(
@@ -863,7 +759,7 @@ function showFormMessage(
 
 
 // =========================================================
-// 17. ENABLE / DISABLE SUBMIT BUTTON
+// 17. SUBMIT BUTTON STATE
 // =========================================================
 
 function setSubmitState(
@@ -908,7 +804,7 @@ function setSubmitState(
 
 
 // =========================================================
-// 18. SUBMIT RSVP TO GOOGLE SHEETS
+// 18. SEND RSVP TO GOOGLE SHEETS
 // =========================================================
 
 rsvpForm.addEventListener(
@@ -920,10 +816,6 @@ rsvpForm.addEventListener(
         event.preventDefault();
 
 
-        // ---------------------------------------------
-        // Get selected attendance
-        // ---------------------------------------------
-
         const attendance =
             document.querySelector(
                 'input[name="attendance"]:checked'
@@ -933,8 +825,11 @@ rsvpForm.addEventListener(
         if (!attendance) {
 
             showFormMessage(
+
                 "Please select whether you will be attending.",
+
                 false
+
             );
 
 
@@ -943,9 +838,6 @@ rsvpForm.addEventListener(
         }
 
 
-        // ---------------------------------------------
-        // Determine number attending
-        // ---------------------------------------------
 
         let numberAttending =
             0;
@@ -971,8 +863,11 @@ rsvpForm.addEventListener(
             ) {
 
                 showFormMessage(
+
                     "Please select the number attending.",
+
                     false
+
                 );
 
 
@@ -981,17 +876,17 @@ rsvpForm.addEventListener(
             }
 
 
-            // Extra protection:
-            // Never allow more than maxGuests.
-
             if (
                 numberAttending >
                 maxGuests
             ) {
 
                 showFormMessage(
+
                     `Maximum allowed guests: ${maxGuests}.`,
+
                     false
+
                 );
 
 
@@ -1002,9 +897,6 @@ rsvpForm.addEventListener(
         }
 
 
-        // ---------------------------------------------
-        // Guest message
-        // ---------------------------------------------
 
         const guestMessageElement =
             document.getElementById(
@@ -1018,9 +910,6 @@ rsvpForm.addEventListener(
                 .trim();
 
 
-        // ---------------------------------------------
-        // Prepare data for Google Apps Script
-        // ---------------------------------------------
 
         const formData =
             new URLSearchParams();
@@ -1062,9 +951,6 @@ rsvpForm.addEventListener(
         );
 
 
-        // ---------------------------------------------
-        // UI state
-        // ---------------------------------------------
 
         setSubmitState(
             true
@@ -1075,55 +961,31 @@ rsvpForm.addEventListener(
             "none";
 
 
-        // ---------------------------------------------
-        // Send to Google Apps Script
-        // ---------------------------------------------
-
         try {
 
-            /*
-             * Google Apps Script Web Apps can be awkward
-             * with browser CORS handling.
-             *
-             * "no-cors" allows our static invitation
-             * website to submit the RSVP directly.
-             *
-             * The response becomes opaque, so we cannot
-             * read Google's returned JSON here.
-             *
-             * But the POST request is still sent.
-             */
+            console.log(
+                "Sending RSVP to:",
+                RSVP_API_URL
+            );
+
 
             await fetch(
 
                 RSVP_API_URL,
 
                 {
-
                     method:
                         "POST",
 
                     mode:
                         "no-cors",
 
-                    headers: {
-
-                        "Content-Type":
-                            "application/x-www-form-urlencoded"
-
-                    },
-
                     body:
-                        formData.toString()
-
+                        formData
                 }
 
             );
 
-
-            // -----------------------------------------
-            // Show success
-            // -----------------------------------------
 
             if (
                 attendance.value === "Yes"
@@ -1151,17 +1013,9 @@ rsvpForm.addEventListener(
             }
 
 
-            // -----------------------------------------
-            // Keep name but clear message
-            // -----------------------------------------
-
             guestMessageElement.value =
                 "";
 
-
-            // -----------------------------------------
-            // Scroll confirmation into view
-            // -----------------------------------------
 
             formResult.scrollIntoView({
 
@@ -1184,7 +1038,7 @@ rsvpForm.addEventListener(
 
             showFormMessage(
 
-                "Sorry, we could not send your RSVP. Please check your internet connection and try again.",
+                "Sorry, we could not send your RSVP. Please try again.",
 
                 false
 

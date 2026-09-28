@@ -798,8 +798,8 @@ button {
 .gallery-grid {
     margin-top: 55px;
     display: grid;
-    grid-template-columns: 1.2fr 0.8fr;
-    grid-template-rows: repeat(2, 280px);
+    grid-template-columns: 0.9fr 1.1fr;
+    grid-template-rows: repeat(2, 330px);
     gap: 17px;
 }
 

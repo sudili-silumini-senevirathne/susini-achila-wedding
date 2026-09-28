@@ -1433,33 +1433,34 @@ footer {
 
 
 /* =========================================================
-   GALLERY
+   GALLERY - FINAL CLEAN VERSION
 ========================================================= */
 
 .gallery-grid {
     margin-top: 55px;
     display: grid;
-    grid-template-columns: 1.2fr 0.8fr;
+    grid-template-columns: 0.9fr 1.1fr;
     grid-template-rows: repeat(2, 330px);
     gap: 17px;
 }
 
 
-/* EACH PHOTO FRAME */
+/* REMOVE ALL FRAMES */
 
 .gallery-photo {
     width: 100%;
     height: 100%;
-    padding: 7px;
+    padding: 0;
     overflow: hidden;
-    border: 1px solid rgba(133, 154, 132, 0.25);
-    background: #faf7ef;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0;
 }
 
 
 /* =========================================================
    LARGE LEFT PHOTO
-   Show the complete portrait
 ========================================================= */
 
 .gallery-main {
@@ -1478,8 +1479,7 @@ footer {
 
 
 /* =========================================================
-   RIGHT-SIDE PHOTOS
-   Fill their frames neatly
+   TOP + BOTTOM RIGHT PHOTOS
 ========================================================= */
 
 .gallery-photo:not(.gallery-main) img {
@@ -1492,21 +1492,21 @@ footer {
 }
 
 
-/* TOP-RIGHT PHOTO */
+/* TOP RIGHT */
 
 .gallery-photo:nth-child(2) img {
     object-position: center 38%;
 }
 
 
-/* BOTTOM-RIGHT PHOTO */
+/* BOTTOM RIGHT */
 
 .gallery-photo:nth-child(3) img {
     object-position: center 50%;
 }
 
 
-/* ELEGANT SMALL HOVER EFFECT */
+/* SMALL HOVER EFFECT */
 
 .gallery-photo:not(.gallery-main):hover img {
     transform: scale(1.02);
@@ -1514,24 +1514,10 @@ footer {
 
 
 /* =========================================================
-   MOBILE PHOTO LAYOUT
+   MOBILE
 ========================================================= */
 
 @media (max-width: 650px) {
-
-    .feature-photo {
-        padding: 6px;
-    }
-
-
-        .feature-photo img {
-            width: 100%;
-            height: auto;
-            max-height: none;
-            object-fit: contain;
-            object-position: center;
-        }
-
 
     .gallery-grid {
         display: flex;
@@ -1543,6 +1529,10 @@ footer {
     .gallery-photo {
         width: 100%;
         height: 420px;
+        padding: 0;
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
     }
 
 
@@ -1551,8 +1541,6 @@ footer {
     }
 
 
-        /* Keep the complete main portrait visible */
-
         .gallery-main img {
             width: 100%;
             height: 100%;
@@ -1560,8 +1548,6 @@ footer {
             object-position: center;
         }
 
-
-    /* Fill the smaller mobile photo frames */
 
     .gallery-photo:not(.gallery-main) img {
         width: 100%;
@@ -1583,7 +1569,7 @@ footer {
 
 
 /* =========================================================
-   SMALL PHONES - PHOTO HEIGHTS
+   SMALL PHONES
 ========================================================= */
 
 @media (max-width: 380px) {

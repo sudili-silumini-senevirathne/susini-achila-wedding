@@ -19,9 +19,7 @@
 // https://script.google.com/macros/s/AKfycbxxxxxxxxxxxx/exec
 
 const RSVP_API_URL =
-    "script.google.com/macros/s/AKfycby78MD1C4SLoaTCHyNAsDTxDPlywVJ50zHVVmzzS2KgHtWvWkPDqo7X8XflBPe2SbZw/exec";
-
-
+    "https://script.google.com/macros/s/AKfycby78MD1C4SLoaTCHyNAsDTxDPlywVJ50zHVVmzzS2KgHtWvWkPDqo7X8XflBPe2SbZw/exec";
 
 // =========================================================
 // 2. WEDDING SETTINGS

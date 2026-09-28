@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500&family=Parisienne&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=5">
 </head>
 
 <body class="page-locked">
@@ -39,7 +39,7 @@
 
             <div class="cover-divider"></div>
 
-            <p class="cover-date">16 • 05 • 2027</p>
+            <p class="cover-date">16 • 05 • 2026</p>
 
             <button type="button" class="open-button" id="openInvitation">
                 OPEN INVITATION
@@ -58,6 +58,7 @@
     <button type="button"
             class="music-control"
             id="musicToggle"
+            hidden
             aria-label="Play or pause A Thousand Years"
             aria-pressed="false">
         <span class="music-note" aria-hidden="true">♫</span>
@@ -67,8 +68,8 @@
         </span>
     </button>
 
-    <audio id="weddingAudio" preload="metadata" loop>
-        <source src="audio/a-thousand-years.mp3" type="audio/mpeg">
+    <audio id="weddingAudio" preload="auto" loop playsinline>
+        <source src="./audio/a-thousand-years.mp3" type="audio/mpeg">
     </audio>
 
 
@@ -136,7 +137,7 @@
                 <div class="big-date reveal">
                     <span>MAY</span>
                     <strong>16</strong>
-                    <span>2027</span>
+                    <span>2026</span>
                 </div>
 
                 <p class="save-date-message reveal">
@@ -259,7 +260,7 @@
                     <div class="date-card-middle">
                         <span>MAY</span>
                         <strong>16</strong>
-                        <span>2027</span>
+                        <span>2026</span>
                     </div>
 
                     <div class="date-card-line"></div>
@@ -419,12 +420,12 @@
                     Achila
                 </h2>
 
-                <p class="closing-date reveal">16 • 05 • 2027</p>
+                <p class="closing-date reveal">16 • 05 • 2026</p>
             </div>
         </section>
 
         <footer>
-            <p>Susini & Achila • 16 May 2027</p>
+            <p>Susini & Achila • 16 May 2026</p>
         </footer>
     </main>
 
@@ -435,7 +436,7 @@
             class="rsvp-submit-frame"
             title="RSVP submission response"></iframe>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=5"></script>
 </body>
 
 </html>

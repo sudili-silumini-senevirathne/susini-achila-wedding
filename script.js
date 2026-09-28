@@ -12,13 +12,26 @@ const RSVP_API_URL =
     "https://script.google.com/macros/s/AKfycby78MD1C4SLoaTCHyNAsDTxDPlywVJ50zHVVmzzS2KgHtWvWkPDqo7X8XflBPe2SbZw/exec";
 
 const WEDDING_DATE =
-    new Date("2027-05-16T09:00:00+05:30");
+    new Date("2026-05-16T09:00:00+05:30");
 
 const CHURCH_MAP_URL =
     "https://www.google.com/maps/search/?api=1&query=St.+Jude%27s+Church+Daluwakotuwa+Sri+Lanka";
 
 const HOTEL_MAP_URL =
     "https://www.google.com/maps/search/?api=1&query=Olanro+Hotel+Negombo+Sri+Lanka";
+
+
+// =========================================================
+// WEDDING EXPERIENCE SETTINGS
+// =========================================================
+
+const MUSIC_TARGET_VOLUME = 0.42;
+const MUSIC_FADE_IN_MS = 3500;
+
+const AUTO_SCROLL_ENABLED = true;
+const AUTO_SCROLL_START_DELAY_MS = 1800;
+const AUTO_SCROLL_FALLBACK_DURATION_MS = 270000;
+const AUTO_SCROLL_END_PADDING_PX = 20;
 
 
 // =========================================================
@@ -645,6 +658,9 @@ loadTrustedGuestInformation();
 // 9. MUSIC - A THOUSAND YEARS
 // =========================================================
 
+let musicFadeFrame = null;
+
+
 function syncMusicButton() {
     const isPlaying =
         !weddingAudio.paused
@@ -667,19 +683,106 @@ function syncMusicButton() {
             : "Play our song";
 }
 
+
+function fadeMusicTo(
+    targetVolume,
+    durationMs
+) {
+    if (musicFadeFrame) {
+        cancelAnimationFrame(
+            musicFadeFrame
+        );
+    }
+
+    const startVolume =
+        weddingAudio.volume;
+
+    const startTime =
+        performance.now();
+
+    function step(now) {
+        const progress =
+            Math.min(
+                1,
+                (now - startTime)
+                /
+                durationMs
+            );
+
+        weddingAudio.volume =
+            startVolume
+            +
+            (
+                targetVolume
+                -
+                startVolume
+            )
+            *
+            progress;
+
+        if (progress < 1) {
+            musicFadeFrame =
+                requestAnimationFrame(
+                    step
+                );
+        }
+        else {
+            musicFadeFrame =
+                null;
+        }
+    }
+
+    musicFadeFrame =
+        requestAnimationFrame(
+            step
+        );
+}
+
+
 async function startWeddingMusic() {
     try {
+        musicToggle.disabled =
+            false;
+
+        musicToggle.classList.remove(
+            "is-unavailable"
+        );
+
+        if (
+            weddingAudio.readyState === 0
+        ) {
+            weddingAudio.load();
+        }
+
         weddingAudio.volume =
-            0.42;
+            0;
 
         await weddingAudio.play();
 
+        fadeMusicTo(
+            MUSIC_TARGET_VOLUME,
+            MUSIC_FADE_IN_MS
+        );
+
         syncMusicButton();
+
+        return true;
     }
     catch (error) {
+        console.error(
+            "Wedding music could not start. Make sure the file exists at audio/a-thousand-years.mp3",
+            error
+        );
+
         syncMusicButton();
+
+        musicLabel.textContent =
+            "Tap to play music";
+
+        return false;
     }
 }
+
 
 musicToggle.addEventListener(
     "click",
@@ -694,28 +797,276 @@ musicToggle.addEventListener(
     }
 );
 
+
 weddingAudio.addEventListener(
     "play",
     syncMusicButton
 );
+
 
 weddingAudio.addEventListener(
     "pause",
     syncMusicButton
 );
 
+
 weddingAudio.addEventListener(
     "error",
     function () {
         musicToggle.disabled =
-            true;
+            false;
 
         musicToggle.classList.add(
             "is-unavailable"
         );
 
         musicLabel.textContent =
-            "Music unavailable";
+            "Song file missing";
+
+        console.error(
+            "Music file not found. Add your legally obtained MP3 as: audio/a-thousand-years.mp3"
+        );
+    }
+);
+
+
+// =========================================================
+// 10. AUTOMATIC SLOW SCROLL
+// =========================================================
+
+let autoScrollFrame = null;
+let autoScrollStarted = false;
+let autoScrollStoppedByGuest = false;
+
+
+function getAutoScrollDurationMs() {
+    const songDurationSeconds =
+        Number(
+            weddingAudio.duration
+        );
+
+    if (
+        Number.isFinite(
+            songDurationSeconds
+        )
+        &&
+        songDurationSeconds > 60
+    ) {
+        return Math.max(
+            120000,
+            (
+                songDurationSeconds
+                *
+                1000
+            )
+            -
+            12000
+        );
+    }
+
+    return AUTO_SCROLL_FALLBACK_DURATION_MS;
+}
+
+
+function stopAutoScrollByGuest() {
+    if (!autoScrollStarted) {
+        return;
+    }
+
+    autoScrollStoppedByGuest =
+        true;
+
+    if (autoScrollFrame) {
+        cancelAnimationFrame(
+            autoScrollFrame
+        );
+
+        autoScrollFrame =
+            null;
+    }
+
+    document.documentElement
+        .classList
+        .remove(
+            "auto-scroll-active"
+        );
+}
+
+
+function startAutomaticSlowScroll() {
+    if (
+        !AUTO_SCROLL_ENABLED
+        ||
+        autoScrollStoppedByGuest
+        ||
+        autoScrollStarted
+    ) {
+        return;
+    }
+
+    if (
+        window.matchMedia
+        &&
+        window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+        ).matches
+    ) {
+        return;
+    }
+
+    const startY =
+        window.scrollY;
+
+    const maxScroll =
+        Math.max(
+            0,
+            document.documentElement.scrollHeight
+            -
+            window.innerHeight
+            -
+            AUTO_SCROLL_END_PADDING_PX
+        );
+
+    if (
+        maxScroll <= startY + 10
+    ) {
+        return;
+    }
+
+    autoScrollStarted =
+        true;
+
+    const duration =
+        getAutoScrollDurationMs();
+
+    const startTime =
+        performance.now();
+
+    document.documentElement
+        .classList
+        .add(
+            "auto-scroll-active"
+        );
+
+    function frame(now) {
+        if (
+            autoScrollStoppedByGuest
+        ) {
+            return;
+        }
+
+        const progress =
+            Math.min(
+                1,
+                (
+                    now
+                    -
+                    startTime
+                )
+                /
+                duration
+            );
+
+        const eased =
+            -(
+                Math.cos(
+                    Math.PI
+                    *
+                    progress
+                )
+                -
+                1
+            )
+            /
+            2;
+
+        const currentMaxScroll =
+            Math.max(
+                0,
+                document.documentElement.scrollHeight
+                -
+                window.innerHeight
+                -
+                AUTO_SCROLL_END_PADDING_PX
+            );
+
+        const targetY =
+            startY
+            +
+            (
+                currentMaxScroll
+                -
+                startY
+            )
+            *
+            eased;
+
+        window.scrollTo(
+            0,
+            targetY
+        );
+
+        if (progress < 1) {
+            autoScrollFrame =
+                requestAnimationFrame(
+                    frame
+                );
+        }
+        else {
+            autoScrollFrame =
+                null;
+
+            document.documentElement
+                .classList
+                .remove(
+                    "auto-scroll-active"
+                );
+        }
+    }
+
+    autoScrollFrame =
+        requestAnimationFrame(
+            frame
+        );
+}
+
+
+window.addEventListener(
+    "wheel",
+    stopAutoScrollByGuest,
+    {
+        passive: true
+    }
+);
+
+window.addEventListener(
+    "touchstart",
+    stopAutoScrollByGuest,
+    {
+        passive: true
+    }
+);
+
+window.addEventListener(
+    "keydown",
+    function (event) {
+        const manualScrollKeys = [
+            "ArrowDown",
+            "ArrowUp",
+            "PageDown",
+            "PageUp",
+            "Home",
+            "End",
+            " "
+        ];
+
+        if (
+            manualScrollKeys.includes(
+                event.key
+            )
+        ) {
+            stopAutoScrollByGuest();
+        }
     }
 );
 
@@ -727,8 +1078,6 @@ weddingAudio.addEventListener(
 openButton.addEventListener(
     "click",
     function () {
-        // The OPEN INVITATION click is a user gesture, so this is
-        // the best moment to start the music on mobile browsers.
         startWeddingMusic();
 
         cover.classList.add(
@@ -744,9 +1093,33 @@ openButton.addEventListener(
                     "page-locked"
                 );
 
-                window.scrollTo(0, 0);
+                window.scrollTo(
+                    0,
+                    0
+                );
 
                 startRevealAnimations();
+
+                musicToggle.hidden =
+                    false;
+
+                musicToggle.classList.add(
+                    "music-enter"
+                );
+
+                setTimeout(
+                    function () {
+                        musicToggle.classList.remove(
+                            "music-enter"
+                        );
+                    },
+                    800
+                );
+
+                setTimeout(
+                    startAutomaticSlowScroll,
+                    AUTO_SCROLL_START_DELAY_MS
+                );
             },
             1050
         );
@@ -940,16 +1313,16 @@ addToCalendar.addEventListener(
     "click",
     function () {
         const calendarContent =
-`BEGIN:VCALENDAR
+            `BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Susini and Achila Wedding//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
-UID:susini-achila-wedding-20270516
-DTSTAMP:20270516T000000Z
-DTSTART;VALUE=DATE:20270516
-DTEND;VALUE=DATE:20270517
+UID:susini-achila-wedding-20260516
+DTSTAMP:20260516T000000Z
+DTSTART;VALUE=DATE:20260516
+DTEND;VALUE=DATE:20260517
 SUMMARY:Susini & Achila's Wedding
 LOCATION:Negombo, Sri Lanka
 DESCRIPTION:Susini & Achila's Wedding\\n\\nChurch Mass - 9:00 AM\\nSt. Jude's Church, Daluwakotuwa\\n\\nWedding Reception - 11:00 AM\\nOlanro Hotel, Negombo

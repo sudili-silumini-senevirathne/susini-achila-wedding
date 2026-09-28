@@ -1397,45 +1397,130 @@ footer {
 }
 /* =========================================================
    REAL WEDDING PHOTOS
+   FIT COMPLETE PHOTO INSIDE FRAME
 ========================================================= */
 
 
-/* MAIN FEATURE PHOTO */
+/* =========================
+   MAIN COUPLE PHOTO
+========================= */
 
-.feature-photo img {
-    display: block;
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    object-fit: cover;
-    object-position: center;
-    border: none;
+.feature-photo {
+    width: min(100%, 840px);
+    margin: auto;
+    padding: 10px;
+    border: 1px solid rgba(133, 154, 132, 0.32);
+    background: #faf7ef;
+    box-shadow: 0 25px 65px rgba(53, 70, 59, 0.08);
+    overflow: hidden;
 }
 
 
-/* GALLERY PHOTOS */
+    .feature-photo img {
+        display: block;
+        width: 100%;
+        height: auto;
+        max-height: 700px;
+        object-fit: contain;
+        object-position: center;
+        margin: auto;
+    }
+
+
+/* =========================
+   GALLERY
+========================= */
+
+.gallery-grid {
+    margin-top: 55px;
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    grid-template-rows: repeat(2, 280px);
+    gap: 17px;
+}
+
+
+/* EACH FRAME */
+
+.gallery-photo {
+    width: 100%;
+    height: 100%;
+    padding: 7px;
+    overflow: hidden;
+    border: 1px solid rgba(133, 154, 132, 0.25);
+    background: #faf7ef;
+}
+
+
+/* BIG LEFT PHOTO */
+
+.gallery-main {
+    grid-row: 1 / 3;
+}
+
+
+/* ACTUAL IMAGE */
 
 .gallery-photo img {
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     object-position: center;
-    transition: transform 0.7s ease;
+    margin: auto;
+    transition: transform 0.5s ease;
 }
 
 
-/* Gentle elegant zoom */
+/* Very small hover effect */
 
 .gallery-photo:hover img {
-    transform: scale(1.025);
+    transform: scale(1.01);
 }
 
 
-/* MOBILE MAIN PHOTO */
+
+/* =========================================================
+   MOBILE
+========================================================= */
 
 @media (max-width: 650px) {
 
-    .feature-photo img {
-        aspect-ratio: 4 / 5;
+    .feature-photo {
+        padding: 6px;
+    }
+
+
+        .feature-photo img {
+            width: 100%;
+            height: auto;
+            max-height: none;
+            object-fit: contain;
+        }
+
+
+    .gallery-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+
+    .gallery-photo {
+        width: 100%;
+        height: 360px;
+    }
+
+
+    .gallery-main {
+        height: 500px;
+    }
+
+
+    .gallery-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
     }
 }

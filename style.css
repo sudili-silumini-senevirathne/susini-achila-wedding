@@ -91,9 +91,9 @@ button {
     text-align: center;
     overflow: hidden;
     background-color: var(--sage-medium);
-    background-image: linear-gradient( rgba(52, 70, 59, 0.28), rgba(37, 53, 43, 0.50) ), url("images/hero.jpg");
+    background-image: linear-gradient( rgba(52, 70, 59, 0.28), rgba(37, 53, 43, 0.50) ), url("images/hero.jpeg");
     background-size: cover;
-    background-position: center;
+    background-position: center center;
     background-repeat: no-repeat;
 }
 

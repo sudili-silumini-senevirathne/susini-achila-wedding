@@ -1395,3 +1395,47 @@ footer {
         margin-top: 9px;
     }
 }
+/* =========================================================
+   REAL WEDDING PHOTOS
+========================================================= */
+
+
+/* MAIN FEATURE PHOTO */
+
+.feature-photo img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    object-position: center;
+    border: none;
+}
+
+
+/* GALLERY PHOTOS */
+
+.gallery-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.7s ease;
+}
+
+
+/* Gentle elegant zoom */
+
+.gallery-photo:hover img {
+    transform: scale(1.025);
+}
+
+
+/* MOBILE MAIN PHOTO */
+
+@media (max-width: 650px) {
+
+    .feature-photo img {
+        aspect-ratio: 4 / 5;
+    }
+}

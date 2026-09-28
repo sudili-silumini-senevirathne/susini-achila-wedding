@@ -17,7 +17,7 @@ const RSVP_API_URL =
 
 const WEDDING_DATE =
     new Date(
-        "2026-05-16T09:00:00+05:30"
+        "2027-05-16T09:00:00+05:30"
     );
 
 
@@ -607,10 +607,10 @@ PRODID:-//Susini and Achila Wedding//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
-UID:susini-achila-wedding-20260516
-DTSTAMP:20260516T000000Z
-DTSTART;VALUE=DATE:20260516
-DTEND;VALUE=DATE:20260517
+UID:susini-achila-wedding-20270516
+DTSTAMP:20270516T000000Z
+DTSTART;VALUE=DATE:20270516
+DTEND;VALUE=DATE:20270517
 SUMMARY:Susini & Achila's Wedding
 LOCATION:Negombo, Sri Lanka
 DESCRIPTION:Susini & Achila's Wedding\\n\\nChurch Mass - 9:00 AM\\nSt. Jude's Church, Daluwakotuwa\\n\\nWedding Reception - 11:00 AM\\nOlanro Hotel, Negombo

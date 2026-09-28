@@ -2,881 +2,440 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <meta name="description"
-          content="Wedding Invitation of Susini and Achila">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Wedding Invitation of Susini and Achila">
+    <meta name="theme-color" content="#52675a">
 
     <title>Susini & Achila | Wedding Invitation</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500&family=Parisienne&display=swap" rel="stylesheet">
 
-    <!-- GOOGLE FONTS -->
-
-    <link rel="preconnect"
-          href="https://fonts.googleapis.com">
-
-    <link rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500&family=Parisienne&display=swap"
-          rel="stylesheet">
-
-
-    <link rel="stylesheet"
-          href="style.css">
-
+    <link rel="stylesheet" href="style.css">
 </head>
 
-
 <body class="page-locked">
-
 
     <!-- =====================================================
          OPENING COVER
     ====================================================== -->
-
-    <section class="cover"
-             id="cover">
-
+    <section class="cover" id="cover">
         <div class="cover-overlay"></div>
 
-
         <div class="cover-content">
-
-            <p class="cover-small">
-                ESPECIALLY INVITED
-            </p>
-
+            <p class="cover-small">ESPECIALLY INVITED</p>
 
             <div class="cover-monogram">
-
-                S
-
-                <span>&</span>
-
-                A
-
+                S <span>&</span> A
             </div>
 
-
             <h1 class="cover-names">
-
                 Susini
-
                 <span>&</span>
-
                 Achila
-
             </h1>
-
 
             <div class="cover-divider"></div>
 
+            <p class="cover-date">16 • 05 • 2027</p>
 
-            <p class="cover-date">
-                16 • 05 • 2027
-            </p>
-
-
-            <button type="button"
-                    class="open-button"
-                    id="openInvitation">
-
+            <button type="button" class="open-button" id="openInvitation">
                 OPEN INVITATION
-
             </button>
 
-
-            <p class="tap-text">
-                Tap to enter
-            </p>
-
+            <p class="tap-text">Tap to enter</p>
         </div>
-
     </section>
 
+
+    <!-- =====================================================
+         MUSIC
+         Add your legally obtained file here:
+         audio/a-thousand-years.mp3
+    ====================================================== -->
+    <button type="button"
+            class="music-control"
+            id="musicToggle"
+            aria-label="Play or pause A Thousand Years"
+            aria-pressed="false">
+        <span class="music-note" aria-hidden="true">♫</span>
+        <span class="music-copy">
+            <strong id="musicLabel">Play our song</strong>
+            <small>A Thousand Years</small>
+        </span>
+    </button>
+
+    <audio id="weddingAudio" preload="metadata" loop>
+        <source src="audio/a-thousand-years.mp3" type="audio/mpeg">
+    </audio>
 
 
     <!-- =====================================================
          MAIN INVITATION
     ====================================================== -->
+    <main class="main-site" id="mainSite">
 
-    <main class="main-site"
-          id="mainSite">
-
-
-        <!-- =================================================
-             INTRODUCTION
-        ================================================== -->
-
+        <!-- INTRODUCTION -->
         <section class="intro-section section">
-
             <div class="section-container narrow">
-
-
-                <p class="section-label reveal">
-                    TOGETHER WITH THEIR FAMILIES
-                </p>
-
+                <p class="section-label reveal">TOGETHER WITH THEIR FAMILIES</p>
 
                 <div class="small-monogram reveal">
-
-                    S
-
-                    <span>&</span>
-
-                    A
-
+                    S <span>&</span> A
                 </div>
-
 
                 <h2 class="script-names reveal">
-
                     Susini
-
                     <span>&</span>
-
                     Achila
-
                 </h2>
-
 
                 <p class="intro-text reveal">
-
                     request the pleasure of your company
                     as they celebrate their wedding
-                    and the beginning of their
-                    forever together.
-
+                    and the beginning of their forever together.
                 </p>
-
 
                 <div class="leaf-divider reveal">
-
                     <span></span>
-
                     <i></i>
-
                     <span></span>
-
                 </div>
-
 
                 <div class="guest-section reveal">
+                    <p class="guest-intro">This invitation is especially for</p>
 
-                    <p class="guest-intro">
-                        This invitation is especially for
-                    </p>
-
-
-                    <h3 id="guestName">
-                        Our Dear Guest
-                    </h3>
-
+                    <h3 id="guestName">Our Dear Guest</h3>
 
                     <p class="guest-note">
-
-                        Your presence would make our
-                        special day even more meaningful.
-
+                        Your presence would make our special day even more meaningful.
                     </p>
-
                 </div>
-
-
             </div>
-
         </section>
 
 
-
-        <!-- =================================================
-             MAIN PHOTO
-        ================================================== -->
-
+        <!-- MAIN PHOTO -->
         <section class="feature-photo-section section">
-
             <div class="feature-photo reveal">
-
                 <img src="images/main-photo.jpeg"
                      alt="Susini and Achila">
-
             </div>
-
         </section>
 
 
-
-        <!-- =================================================
-             SAVE THE DATE
-        ================================================== -->
-
+        <!-- SAVE THE DATE -->
         <section class="save-date-section section">
-
             <div class="section-container narrow">
+                <p class="section-label reveal">SAVE THE DATE</p>
 
-
-                <p class="section-label reveal">
-                    SAVE THE DATE
-                </p>
-
-
-                <h2 class="section-heading reveal">
-                    Saturday
-                </h2>
-
+                <h2 class="section-heading reveal">Saturday</h2>
 
                 <div class="big-date reveal">
-
-                    <span>
-                        MAY
-                    </span>
-
-                    <strong>
-                        16
-                    </strong>
-
-                    <span>
-                        2027
-                    </span>
-
+                    <span>MAY</span>
+                    <strong>16</strong>
+                    <span>2027</span>
                 </div>
 
-
                 <p class="save-date-message reveal">
-
-                    We cannot wait to celebrate
-                    this beautiful day with you.
-
+                    We cannot wait to celebrate this beautiful day with you.
                 </p>
-
-
-                <!-- ADD TO CALENDAR -->
 
                 <button type="button"
                         class="outline-button reveal"
                         id="addToCalendar">
-
                     ADD TO CALENDAR
-
                 </button>
-
-
             </div>
-
         </section>
 
 
-
-        <!-- =================================================
-             COUNTDOWN
-        ================================================== -->
-
+        <!-- COUNTDOWN -->
         <section class="countdown-section section">
-
             <div class="section-container">
+                <p class="section-label light reveal">COUNTING DOWN TO</p>
 
-
-                <p class="section-label light reveal">
-                    COUNTING DOWN TO
-                </p>
-
-
-                <h2 class="countdown-title reveal">
-                    Our Forever
-                </h2>
-
+                <h2 class="countdown-title reveal">Our Forever</h2>
 
                 <div class="countdown-grid reveal">
-
-
                     <div class="countdown-item">
-
-                        <strong id="days">
-                            00
-                        </strong>
-
-                        <span>
-                            DAYS
-                        </span>
-
+                        <strong id="days">00</strong>
+                        <span>DAYS</span>
                     </div>
 
-
                     <div class="countdown-item">
-
-                        <strong id="hours">
-                            00
-                        </strong>
-
-                        <span>
-                            HOURS
-                        </span>
-
+                        <strong id="hours">00</strong>
+                        <span>HOURS</span>
                     </div>
 
-
                     <div class="countdown-item">
-
-                        <strong id="minutes">
-                            00
-                        </strong>
-
-                        <span>
-                            MINUTES
-                        </span>
-
+                        <strong id="minutes">00</strong>
+                        <span>MINUTES</span>
                     </div>
 
-
                     <div class="countdown-item">
-
-                        <strong id="seconds">
-                            00
-                        </strong>
-
-                        <span>
-                            SECONDS
-                        </span>
-
+                        <strong id="seconds">00</strong>
+                        <span>SECONDS</span>
                     </div>
-
-
                 </div>
 
-
-                <p class="countdown-message reveal"
-                   id="countdownMessage">
-                </p>
-
-
+                <p class="countdown-message reveal" id="countdownMessage"></p>
             </div>
-
         </section>
 
 
-
-        <!-- =================================================
-             WEDDING DAY TIMELINE
-        ================================================== -->
-
+        <!-- WEDDING DAY TIMELINE -->
         <section class="schedule-section section">
-
             <div class="section-container">
+                <p class="section-label reveal">OUR WEDDING DAY</p>
 
-
-                <p class="section-label reveal">
-                    OUR WEDDING DAY
-                </p>
-
-
-                <h2 class="section-heading reveal">
-                    The Celebration
-                </h2>
-
+                <h2 class="section-heading reveal">The Celebration</h2>
 
                 <p class="schedule-intro reveal">
-
-                    We would be honoured to have you
-                    join us throughout our special day.
-
+                    We would be honoured to have you join us throughout our special day.
                 </p>
 
-
                 <div class="timeline">
-
-
-                    <!-- CHURCH -->
-
                     <article class="timeline-item reveal">
-
-
                         <div class="timeline-time">
-
-                            <span>
-                                09:00
-                            </span>
-
-                            <small>
-                                AM
-                            </small>
-
+                            <span>09:00</span>
+                            <small>AM</small>
                         </div>
-
 
                         <div class="timeline-marker">
-
                             <div></div>
-
                         </div>
 
-
                         <div class="timeline-content">
-
-                            <p class="timeline-label">
-                                THE CEREMONY
-                            </p>
-
-
-                            <h3>
-                                Church Mass
-                            </h3>
-
-
-                            <p class="timeline-place">
-                                St. Jude's Church
-                            </p>
-
-
-                            <p class="timeline-address">
-                                Daluwakotuwa
-                            </p>
-
+                            <p class="timeline-label">THE CEREMONY</p>
+                            <h3>Church Mass</h3>
+                            <p class="timeline-place">St. Jude's Church</p>
+                            <p class="timeline-address">Daluwakotuwa</p>
 
                             <button type="button"
                                     class="outline-button"
                                     id="churchLocation">
-
                                 VIEW CHURCH LOCATION
-
                             </button>
-
                         </div>
-
-
                     </article>
 
-
-
-                    <!-- RECEPTION -->
-
                     <article class="timeline-item reveal">
-
-
                         <div class="timeline-time">
-
-                            <span>
-                                11:00
-                            </span>
-
-                            <small>
-                                AM
-                            </small>
-
+                            <span>11:00</span>
+                            <small>AM</small>
                         </div>
-
 
                         <div class="timeline-marker">
-
                             <div></div>
-
                         </div>
 
-
                         <div class="timeline-content">
-
-                            <p class="timeline-label">
-                                THE RECEPTION
-                            </p>
-
-
-                            <h3>
-                                Wedding Reception
-                            </h3>
-
-
-                            <p class="timeline-place">
-                                Olanro Hotel
-                            </p>
-
-
-                            <p class="timeline-address">
-                                Negombo
-                            </p>
-
+                            <p class="timeline-label">THE RECEPTION</p>
+                            <h3>Wedding Reception</h3>
+                            <p class="timeline-place">Olanro Hotel</p>
+                            <p class="timeline-address">Negombo</p>
 
                             <button type="button"
                                     class="outline-button"
                                     id="hotelLocation">
-
                                 VIEW RECEPTION LOCATION
-
                             </button>
-
                         </div>
-
-
                     </article>
-
-
                 </div>
-
-
             </div>
-
         </section>
 
 
-
-        <!-- =================================================
-             DATE CARD
-        ================================================== -->
-
+        <!-- DATE CARD -->
         <section class="date-card-section section">
-
             <div class="section-container narrow">
-
-
                 <div class="date-card reveal">
-
-
-                    <p>
-                        SATURDAY
-                    </p>
-
+                    <p>SATURDAY</p>
 
                     <div class="date-card-middle">
-
-                        <span>
-                            MAY
-                        </span>
-
-                        <strong>
-                            16
-                        </strong>
-
-                        <span>
-                            2027
-                        </span>
-
+                        <span>MAY</span>
+                        <strong>16</strong>
+                        <span>2027</span>
                     </div>
-
 
                     <div class="date-card-line"></div>
 
-
                     <p class="date-card-text">
-
-                        Two hearts, one promise,
-                        and a lifetime ahead.
-
+                        Two hearts, one promise, and a lifetime ahead.
                     </p>
-
-
                 </div>
-
-
             </div>
-
         </section>
 
 
-
-        <!-- =================================================
-             GALLERY
-        ================================================== -->
-
+        <!-- GALLERY -->
         <section class="gallery-section section">
-
             <div class="section-container">
+                <p class="section-label reveal">OUR MOMENTS</p>
 
-
-                <p class="section-label reveal">
-                    OUR MOMENTS
-                </p>
-
-
-                <h2 class="section-heading reveal">
-                    A Little Piece of Us
-                </h2>
-
+                <h2 class="section-heading reveal">A Little Piece of Us</h2>
 
                 <div class="gallery-grid">
-
-
                     <div class="gallery-photo gallery-main reveal">
-
                         <img src="images/photo1.jpeg"
-                             alt="Susini and Achila wedding photo">
-
+                             alt="Susini and Achila">
                     </div>
 
-
                     <div class="gallery-photo reveal">
-
                         <img src="images/photo2.jpeg"
-                             alt="Susini and Achila wedding photo">
-
+                             alt="Susini and Achila">
                     </div>
-
 
                     <div class="gallery-photo reveal">
-
                         <img src="images/photo3.jpeg"
-                             alt="Susini and Achila wedding photo">
-
+                             alt="Susini and Achila">
                     </div>
-
-
                 </div>
-
-
             </div>
-
         </section>
 
 
-
-        <!-- =================================================
-             QUOTE
-        ================================================== -->
-
+        <!-- QUOTE -->
         <section class="quote-section section">
-
             <div class="section-container narrow">
-
-
-                <div class="quote-symbol reveal">
-                    “
-                </div>
-
+                <div class="quote-symbol reveal">“</div>
 
                 <blockquote class="reveal">
-
-                    Two souls,
-                    one beautiful journey,
-                    and forever to go.
-
+                    Two souls, one beautiful journey, and forever to go.
                 </blockquote>
-
 
                 <div class="quote-line reveal"></div>
 
-
-                <p class="quote-couple reveal">
-                    Susini & Achila
-                </p>
-
-
+                <p class="quote-couple reveal">Susini & Achila</p>
             </div>
-
         </section>
 
 
-
-        <!-- =================================================
-             RSVP
-        ================================================== -->
-
-        <section class="rsvp-section section"
-                 id="rsvp">
-
-
+        <!-- RSVP -->
+        <section class="rsvp-section section" id="rsvp">
             <div class="section-container narrow">
+                <p class="section-label reveal">KINDLY RESPOND</p>
 
-
-                <p class="section-label reveal">
-                    KINDLY RESPOND
-                </p>
-
-
-                <h2 class="section-heading reveal">
-                    RSVP
-                </h2>
-
+                <h2 class="section-heading reveal">RSVP</h2>
 
                 <p class="rsvp-description reveal">
-
-                    Kindly confirm your attendance
-                    and let us know if you will
-                    be joining our celebration.
-
+                    Kindly confirm your attendance and let us know if you will be joining our celebration.
                 </p>
 
+                <p class="rsvp-deadline reveal"
+                   id="rsvpDeadlineText"
+                   hidden></p>
+
+                <div class="existing-rsvp-status reveal"
+                     id="existingRsvpStatus"
+                     hidden>
+                    <p class="existing-rsvp-label">YOUR SAVED RESPONSE</p>
+                    <p class="existing-rsvp-main" id="existingRsvpMain"></p>
+                    <p class="existing-rsvp-note">
+                        You may update your response below at any time while RSVP is open.
+                    </p>
+                </div>
 
                 <form class="rsvp-form reveal"
-                      id="rsvpForm">
-
+                      id="rsvpForm"
+                      novalidate>
 
                     <div class="form-group">
-
-                        <label for="rsvpName">
-                            Guest Name
-                        </label>
-
+                        <label for="rsvpName">Guest Name</label>
 
                         <input type="text"
                                id="rsvpName"
                                name="guestName"
                                readonly>
-
                     </div>
 
-
-
                     <div class="form-group">
-
-                        <label>
-                            Will you be attending?
-                        </label>
-
+                        <label>Will you be attending?</label>
 
                         <div class="attendance-options">
-
-
                             <label class="choice">
-
                                 <input type="radio"
                                        name="attendance"
-                                       value="Yes"
-                                       required>
-
-                                <span>
-                                    Joyfully Accept
-                                </span>
-
+                                       value="Yes">
+                                <span>Joyfully Accept</span>
                             </label>
-
 
                             <label class="choice">
-
                                 <input type="radio"
                                        name="attendance"
-                                       value="No"
-                                       required>
-
-                                <span>
-                                    Regretfully Decline
-                                </span>
-
+                                       value="No">
+                                <span>Regretfully Decline</span>
                             </label>
-
-
                         </div>
-
                     </div>
 
+                    <div class="form-group" id="guestCountGroup">
+                        <label for="guestCount">Number Attending</label>
 
-
-                    <div class="form-group"
-                         id="guestCountGroup">
-
-                        <label for="guestCount">
-                            Number Attending
-                        </label>
-
-
-                        <select id="guestCount"
-                                name="guestCount">
-                        </select>
-
+                        <select id="guestCount" name="guestCount"></select>
                     </div>
-
-
 
                     <div class="form-group">
-
-                        <label for="guestMessage">
-                            Message for the Couple
-                        </label>
-
+                        <label for="guestMessage">Message for the Couple</label>
 
                         <textarea id="guestMessage"
                                   name="guestMessage"
                                   rows="4"
+                                  maxlength="1000"
                                   placeholder="Write a few words..."></textarea>
-
                     </div>
-
-
 
                     <button type="submit"
                             class="submit-button">
-
                         SEND RSVP
-
                     </button>
 
-
-                    <p class="form-result"
-                       id="formResult">
+                    <p class="rsvp-security-note">
+                        Your invitation is verified securely before your response is saved.
                     </p>
 
-
+                    <p class="form-result" id="formResult" aria-live="polite"></p>
                 </form>
-
-
             </div>
-
         </section>
 
 
-
-        <!-- =================================================
-             CLOSING
-        ================================================== -->
-
+        <!-- CLOSING -->
         <section class="closing-section section">
-
             <div class="section-container narrow">
-
-
-                <div class="closing-monogram reveal">
-                    S & A
-                </div>
-
+                <div class="closing-monogram reveal">S & A</div>
 
                 <p class="closing-message reveal">
-
-                    We look forward to sharing
-                    this unforgettable day with you.
-
+                    We look forward to sharing this unforgettable day with you.
                 </p>
-
 
                 <h2 class="closing-names reveal">
-
                     Susini
-
                     <span>&</span>
-
                     Achila
-
                 </h2>
 
-
-                <p class="closing-date reveal">
-                    16 • 05 • 2027
-                </p>
-
-
+                <p class="closing-date reveal">16 • 05 • 2027</p>
             </div>
-
         </section>
 
-
-
         <footer>
-
-            <p>
-                Susini & Achila • 16 May 2027
-            </p>
-
+            <p>Susini & Achila • 16 May 2027</p>
         </footer>
-
-
     </main>
 
 
+    <!-- Hidden target used for reliable Google Apps Script POST confirmation -->
+    <iframe name="rsvpSubmitFrame"
+            id="rsvpSubmitFrame"
+            class="rsvp-submit-frame"
+            title="RSVP submission response"></iframe>
 
     <script src="script.js"></script>
-
-
 </body>
 
 </html>

@@ -5,21 +5,14 @@
 
 
 // =========================================================
-// 1. GOOGLE APPS SCRIPT RSVP API
+// 1. SETTINGS
 // =========================================================
 
 const RSVP_API_URL =
     "https://script.google.com/macros/s/AKfycby78MD1C4SLoaTCHyNAsDTxDPlywVJ50zHVVmzzS2KgHtWvWkPDqo7X8XflBPe2SbZw/exec";
 
-
-// =========================================================
-// 2. WEDDING SETTINGS
-// =========================================================
-
 const WEDDING_DATE =
-    new Date(
-        "2026-05-16T09:00:00+05:30"
-    );
+    new Date("2027-05-16T09:00:00+05:30");
 
 const CHURCH_MAP_URL =
     "https://www.google.com/maps/search/?api=1&query=St.+Jude%27s+Church+Daluwakotuwa+Sri+Lanka";
@@ -29,97 +22,76 @@ const HOTEL_MAP_URL =
 
 
 // =========================================================
-// 3. PAGE ELEMENTS
+// 2. PAGE ELEMENTS
 // =========================================================
 
 const cover =
-    document.getElementById(
-        "cover"
-    );
+    document.getElementById("cover");
 
 const openButton =
-    document.getElementById(
-        "openInvitation"
-    );
+    document.getElementById("openInvitation");
 
 const guestNameElement =
-    document.getElementById(
-        "guestName"
-    );
+    document.getElementById("guestName");
 
 const rsvpName =
-    document.getElementById(
-        "rsvpName"
-    );
+    document.getElementById("rsvpName");
 
 const guestCount =
-    document.getElementById(
-        "guestCount"
-    );
+    document.getElementById("guestCount");
 
 const guestCountGroup =
-    document.getElementById(
-        "guestCountGroup"
-    );
+    document.getElementById("guestCountGroup");
 
 const rsvpForm =
-    document.getElementById(
-        "rsvpForm"
-    );
+    document.getElementById("rsvpForm");
 
 const formResult =
-    document.getElementById(
-        "formResult"
-    );
-
-const churchLocation =
-    document.getElementById(
-        "churchLocation"
-    );
-
-const hotelLocation =
-    document.getElementById(
-        "hotelLocation"
-    );
-
-const addToCalendar =
-    document.getElementById(
-        "addToCalendar"
-    );
+    document.getElementById("formResult");
 
 const submitButton =
-    rsvpForm.querySelector(
-        ".submit-button"
-    );
+    rsvpForm.querySelector(".submit-button");
+
+const guestMessageElement =
+    document.getElementById("guestMessage");
+
+const existingRsvpStatus =
+    document.getElementById("existingRsvpStatus");
+
+const existingRsvpMain =
+    document.getElementById("existingRsvpMain");
+
+const rsvpDeadlineText =
+    document.getElementById("rsvpDeadlineText");
+
+const churchLocation =
+    document.getElementById("churchLocation");
+
+const hotelLocation =
+    document.getElementById("hotelLocation");
+
+const addToCalendar =
+    document.getElementById("addToCalendar");
+
+const weddingAudio =
+    document.getElementById("weddingAudio");
+
+const musicToggle =
+    document.getElementById("musicToggle");
+
+const musicLabel =
+    document.getElementById("musicLabel");
 
 
 // =========================================================
-// 4. READ URL PARAMETERS
-// =========================================================
-//
-// Example:
-//
-// ?i=5FB6B6DC6C
-// &n=U3VkaWxpIFNlbmV2aXJhdGhuZQ==
-// &max=1
-//
-// i   = Invitation ID
-// n   = Guest-name display hint
-// max = Guest-count display hint
-//
-// IMPORTANT:
-// The website does NOT trust n or max.
-// The real GuestName and MaxGuests are loaded from Google
-// using InvitationID.
+// 3. URL PARAMETERS
 // =========================================================
 
 const params =
-    new URLSearchParams(
-        window.location.search
-    );
+    new URLSearchParams(window.location.search);
 
 const invitationId =
-    params.get("i") || "";
+    String(params.get("i") || "").trim();
 
 const encodedName =
     params.get("n");
@@ -127,34 +99,16 @@ const encodedName =
 const plainName =
     params.get("name");
 
-const maxGuestsParameter =
-    parseInt(
-        params.get("max"),
-        10
-    );
-
 
 // =========================================================
-// 5. DEFAULT / TEMPORARY GUEST INFORMATION
+// 4. INVITATION STATE
 // =========================================================
 
 let guestName =
     "Our Dear Guest";
 
-// If there is an Invitation ID, do not trust the max value
-// from the URL. Start at 1 until Google verifies the invite.
 let maxGuests =
-    invitationId
-        ? 1
-        : (
-            Number.isInteger(
-                maxGuestsParameter
-            )
-                &&
-                maxGuestsParameter > 0
-                ? maxGuestsParameter
-                : 1
-        );
+    1;
 
 let guestIsVerified =
     false;
@@ -162,12 +116,28 @@ let guestIsVerified =
 let verificationFailed =
     false;
 
+let deadlineClosed =
+    false;
+
+let existingRsvp =
+    null;
+
+let submitInFlight =
+    false;
+
+let pendingSubmission =
+    null;
+
 
 // =========================================================
-// 6. DECODE BASE64 GUEST NAME
+// 5. DECODE DISPLAY NAME FROM LINK
 // =========================================================
 
 function decodeGuestName(value) {
+    if (!value) {
+        return null;
+    }
+
     try {
         return decodeURIComponent(
             Array.prototype.map.call(
@@ -196,20 +166,13 @@ function decodeGuestName(value) {
     }
 }
 
-
-// =========================================================
-// 7. TEMPORARY NAME DISPLAY FROM URL
-// =========================================================
-
 if (encodedName) {
-    const decoded =
-        decodeGuestName(
-            encodedName
-        );
+    const decodedName =
+        decodeGuestName(encodedName);
 
-    if (decoded) {
+    if (decodedName) {
         guestName =
-            decoded;
+            decodedName;
     }
 }
 else if (plainName) {
@@ -225,10 +188,10 @@ rsvpName.value =
 
 
 // =========================================================
-// 8. CREATE GUEST COUNT OPTIONS
+// 6. GUEST COUNT OPTIONS
 // =========================================================
 
-function createGuestOptions() {
+function createGuestOptions(selectedValue = null) {
     guestCount.innerHTML =
         "";
 
@@ -238,21 +201,28 @@ function createGuestOptions() {
         number++
     ) {
         const option =
-            document.createElement(
-                "option"
-            );
+            document.createElement("option");
 
         option.value =
-            number;
+            String(number);
 
         option.textContent =
             number === 1
                 ? "1 Guest"
                 : `${number} Guests`;
 
-        guestCount.appendChild(
-            option
-        );
+        guestCount.appendChild(option);
+    }
+
+    if (
+        selectedValue !== null
+        &&
+        Number(selectedValue) >= 1
+        &&
+        Number(selectedValue) <= maxGuests
+    ) {
+        guestCount.value =
+            String(selectedValue);
     }
 }
 
@@ -260,46 +230,185 @@ createGuestOptions();
 
 
 // =========================================================
-// 9. SUBMIT BUTTON AVAILABILITY
+// 7. FORM HELPERS
 // =========================================================
 
+function showFormMessage(message, success) {
+    formResult.textContent =
+        message;
+
+    formResult.style.display =
+        "block";
+
+    formResult.classList.toggle(
+        "success",
+        Boolean(success)
+    );
+
+    formResult.classList.toggle(
+        "error",
+        !success
+    );
+}
+
+function setRsvpControlsDisabled(disabled) {
+    const controls =
+        rsvpForm.querySelectorAll(
+            'input[name="attendance"], select, textarea'
+        );
+
+    controls.forEach(
+        function (control) {
+            control.disabled =
+                disabled;
+        }
+    );
+}
+
+function getSubmitButtonText() {
+    if (deadlineClosed) {
+        return "RSVP CLOSED";
+    }
+
+    if (!invitationId) {
+        return "PERSONAL INVITATION REQUIRED";
+    }
+
+    if (verificationFailed) {
+        return "INVITATION NOT VERIFIED";
+    }
+
+    if (!guestIsVerified) {
+        return "VERIFYING INVITATION...";
+    }
+
+    if (existingRsvp) {
+        return "UPDATE RSVP";
+    }
+
+    return "SEND RSVP";
+}
+
 function updateSubmitAvailability() {
-    if (guestIsVerified) {
-        submitButton.disabled =
-            false;
+    const unavailable =
+        !guestIsVerified
+        ||
+        verificationFailed
+        ||
+        deadlineClosed
+        ||
+        submitInFlight;
 
-        submitButton.textContent =
-            "SEND RSVP";
+    submitButton.disabled =
+        unavailable;
 
-        submitButton.style.opacity =
-            "1";
+    submitButton.textContent =
+        submitInFlight
+            ? "SAVING..."
+            : getSubmitButtonText();
 
-        submitButton.style.cursor =
-            "pointer";
+    submitButton.style.opacity =
+        unavailable
+            ? "0.62"
+            : "1";
+
+    submitButton.style.cursor =
+        unavailable
+            ? "not-allowed"
+            : "pointer";
+}
+
+function updateExistingRsvpBanner(rsvp) {
+    if (!rsvp || !rsvp.exists) {
+        existingRsvp =
+            null;
+
+        existingRsvpStatus.hidden =
+            true;
 
         return;
     }
 
-    submitButton.disabled =
-        true;
+    existingRsvp =
+        rsvp;
 
-    submitButton.style.opacity =
-        "0.60";
+    const attendingText =
+        rsvp.attendance === "Yes"
+            ? (
+                Number(rsvp.numberAttending) === 1
+                    ? "Joyfully accepting • 1 guest"
+                    : `Joyfully accepting • ${rsvp.numberAttending} guests`
+            )
+            : "Regretfully declining";
 
-    submitButton.style.cursor =
-        "not-allowed";
+    existingRsvpMain.textContent =
+        attendingText;
 
-    if (!invitationId) {
-        submitButton.textContent =
-            "PERSONAL INVITATION REQUIRED";
+    existingRsvpStatus.hidden =
+        false;
+}
+
+function applyExistingRsvp(rsvp) {
+    updateExistingRsvpBanner(rsvp);
+
+    if (!rsvp || !rsvp.exists) {
+        return;
     }
-    else if (verificationFailed) {
-        submitButton.textContent =
-            "INVITATION NOT VERIFIED";
+
+    const attendanceRadio =
+        document.querySelector(
+            `input[name="attendance"][value="${rsvp.attendance}"]`
+        );
+
+    if (attendanceRadio) {
+        attendanceRadio.checked =
+            true;
+    }
+
+    if (rsvp.attendance === "Yes") {
+        guestCountGroup.style.display =
+            "block";
+
+        createGuestOptions(
+            rsvp.numberAttending
+        );
     }
     else {
-        submitButton.textContent =
-            "VERIFYING INVITATION...";
+        guestCountGroup.style.display =
+            "none";
+    }
+
+    guestMessageElement.value =
+        String(rsvp.message || "");
+}
+
+function applyDeadline(deadline) {
+    if (!deadline || !deadline.enabled) {
+        rsvpDeadlineText.hidden =
+            true;
+
+        deadlineClosed =
+            false;
+
+        return;
+    }
+
+    rsvpDeadlineText.hidden =
+        false;
+
+    rsvpDeadlineText.textContent =
+        deadline.text || "";
+
+    deadlineClosed =
+        Boolean(deadline.closed);
+
+    if (deadlineClosed) {
+        setRsvpControlsDisabled(true);
+
+        showFormMessage(
+            "RSVP is now closed. Please contact the couple directly if you need to make a change.",
+            false
+        );
     }
 }
 
@@ -307,19 +416,7 @@ updateSubmitAvailability();
 
 
 // =========================================================
-// 10. LOAD TRUSTED GUEST INFORMATION FROM GOOGLE
-// =========================================================
-//
-// Even if somebody changes:
-//
-// &max=1
-//
-// to:
-//
-// &max=10
-//
-// Google checks the InvitationID and returns the real
-// GuestName and MaxGuests from the Guests sheet.
+// 8. VERIFY INVITATION WITH GOOGLE
 // =========================================================
 
 function loadTrustedGuestInformation() {
@@ -348,9 +445,7 @@ function loadTrustedGuestInformation() {
                 );
 
             const googleScript =
-                document.createElement(
-                    "script"
-                );
+                document.createElement("script");
 
             let finished =
                 false;
@@ -365,11 +460,11 @@ function loadTrustedGuestInformation() {
                         finished =
                             true;
 
-                        verificationFailed =
-                            true;
-
                         guestIsVerified =
                             false;
+
+                        verificationFailed =
+                            true;
 
                         cleanup();
 
@@ -386,114 +481,111 @@ function loadTrustedGuestInformation() {
                 );
 
             function cleanup() {
-                clearTimeout(
-                    timeout
-                );
+                clearTimeout(timeout);
 
-                if (
-                    googleScript.parentNode
-                ) {
-                    googleScript
-                        .parentNode
-                        .removeChild(
-                            googleScript
-                        );
+                if (googleScript.parentNode) {
+                    googleScript.parentNode.removeChild(
+                        googleScript
+                    );
                 }
 
                 try {
-                    delete window[
-                        callbackName
-                    ];
+                    delete window[callbackName];
                 }
                 catch {
-                    window[
-                        callbackName
-                    ] = undefined;
+                    window[callbackName] =
+                        undefined;
                 }
             }
 
-            window[
-                callbackName
-            ] = function (data) {
-                if (finished) {
-                    return;
-                }
-
-                finished =
-                    true;
-
-                if (
-                    data &&
-                    data.success
-                ) {
-                    guestName =
-                        String(
-                            data.guestName || ""
-                        ).trim();
-
-                    maxGuests =
-                        parseInt(
-                            data.maxGuests,
-                            10
-                        );
-
-                    if (
-                        !Number.isInteger(
-                            maxGuests
-                        )
-                        ||
-                        maxGuests < 1
-                    ) {
-                        maxGuests =
-                            1;
+            window[callbackName] =
+                function (data) {
+                    if (finished) {
+                        return;
                     }
 
-                    guestNameElement.textContent =
-                        guestName;
-
-                    rsvpName.value =
-                        guestName;
-
-                    createGuestOptions();
-
-                    guestIsVerified =
+                    finished =
                         true;
 
-                    verificationFailed =
+                    if (
+                        data
+                        &&
+                        data.success
+                    ) {
+                        guestName =
+                            String(
+                                data.guestName || ""
+                            ).trim();
+
+                        maxGuests =
+                            parseInt(
+                                data.maxGuests,
+                                10
+                            );
+
+                        if (
+                            !Number.isInteger(maxGuests)
+                            ||
+                            maxGuests < 1
+                        ) {
+                            maxGuests =
+                                1;
+                        }
+
+                        guestNameElement.textContent =
+                            guestName;
+
+                        rsvpName.value =
+                            guestName;
+
+                        createGuestOptions();
+
+                        applyExistingRsvp(
+                            data.rsvp
+                        );
+
+                        applyDeadline(
+                            data.deadline
+                        );
+
+                        guestIsVerified =
+                            true;
+
+                        verificationFailed =
+                            false;
+
+                        cleanup();
+
+                        updateSubmitAvailability();
+
+                        resolve(true);
+
+                        return;
+                    }
+
+                    guestIsVerified =
                         false;
+
+                    verificationFailed =
+                        true;
+
+                    guestNameElement.textContent =
+                        "Invitation not found";
+
+                    rsvpName.value =
+                        "";
 
                     cleanup();
 
                     updateSubmitAvailability();
 
-                    resolve(true);
+                    showFormMessage(
+                        "This invitation link could not be verified.",
+                        false
+                    );
 
-                    return;
-                }
-
-                guestIsVerified =
-                    false;
-
-                verificationFailed =
-                    true;
-
-                guestNameElement.textContent =
-                    "Invitation not found";
-
-                rsvpName.value =
-                    "";
-
-                cleanup();
-
-                updateSubmitAvailability();
-
-                showFormMessage(
-                    "This invitation link could not be verified.",
-                    false
-                );
-
-                resolve(false);
-            };
+                    resolve(false);
+                };
 
             googleScript.onerror =
                 function () {
@@ -529,36 +621,116 @@ function loadTrustedGuestInformation() {
                 +
                 "&i="
                 +
-                encodeURIComponent(
-                    invitationId
-                )
+                encodeURIComponent(invitationId)
                 +
                 "&callback="
                 +
-                encodeURIComponent(
-                    callbackName
-                )
+                encodeURIComponent(callbackName)
                 +
                 "&_="
                 +
                 Date.now();
 
-            document.body
-                .appendChild(
-                    googleScript
-                );
+            document.body.appendChild(
+                googleScript
+            );
         }
     );
 }
 
 loadTrustedGuestInformation();
+
+
 // =========================================================
-// 11. OPEN INVITATION
+// 9. MUSIC - A THOUSAND YEARS
+// =========================================================
+
+function syncMusicButton() {
+    const isPlaying =
+        !weddingAudio.paused
+        &&
+        !weddingAudio.ended;
+
+    musicToggle.setAttribute(
+        "aria-pressed",
+        isPlaying ? "true" : "false"
+    );
+
+    musicToggle.classList.toggle(
+        "is-playing",
+        isPlaying
+    );
+
+    musicLabel.textContent =
+        isPlaying
+            ? "Pause our song"
+            : "Play our song";
+}
+
+async function startWeddingMusic() {
+    try {
+        weddingAudio.volume =
+            0.42;
+
+        await weddingAudio.play();
+
+        syncMusicButton();
+    }
+    catch (error) {
+        syncMusicButton();
+    }
+}
+
+musicToggle.addEventListener(
+    "click",
+    async function () {
+        if (weddingAudio.paused) {
+            await startWeddingMusic();
+        }
+        else {
+            weddingAudio.pause();
+            syncMusicButton();
+        }
+    }
+);
+
+weddingAudio.addEventListener(
+    "play",
+    syncMusicButton
+);
+
+weddingAudio.addEventListener(
+    "pause",
+    syncMusicButton
+);
+
+weddingAudio.addEventListener(
+    "error",
+    function () {
+        musicToggle.disabled =
+            true;
+
+        musicToggle.classList.add(
+            "is-unavailable"
+        );
+
+        musicLabel.textContent =
+            "Music unavailable";
+    }
+);
+
+
+// =========================================================
+// 10. OPEN INVITATION
 // =========================================================
 
 openButton.addEventListener(
     "click",
     function () {
+        // The OPEN INVITATION click is a user gesture, so this is
+        // the best moment to start the music on mobile browsers.
+        startWeddingMusic();
+
         cover.classList.add(
             "is-opening"
         );
@@ -568,16 +740,11 @@ openButton.addEventListener(
                 cover.style.display =
                     "none";
 
-                document.body
-                    .classList
-                    .remove(
-                        "page-locked"
-                    );
-
-                window.scrollTo(
-                    0,
-                    0
+                document.body.classList.remove(
+                    "page-locked"
                 );
+
+                window.scrollTo(0, 0);
 
                 startRevealAnimations();
             },
@@ -588,7 +755,7 @@ openButton.addEventListener(
 
 
 // =========================================================
-// 12. SCROLL REVEAL
+// 11. SCROLL REVEAL
 // =========================================================
 
 function startRevealAnimations() {
@@ -596,6 +763,24 @@ function startRevealAnimations() {
         document.querySelectorAll(
             ".reveal"
         );
+
+    if (
+        window.matchMedia
+        &&
+        window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+        ).matches
+    ) {
+        revealElements.forEach(
+            function (element) {
+                element.classList.add(
+                    "visible"
+                );
+            }
+        );
+
+        return;
+    }
 
     const observer =
         new IntersectionObserver(
@@ -605,19 +790,14 @@ function startRevealAnimations() {
             ) {
                 entries.forEach(
                     function (entry) {
-                        if (
-                            entry.isIntersecting
-                        ) {
-                            entry.target
-                                .classList
-                                .add(
-                                    "visible"
-                                );
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add(
+                                "visible"
+                            );
 
-                            currentObserver
-                                .unobserve(
-                                    entry.target
-                                );
+                            currentObserver.unobserve(
+                                entry.target
+                            );
                         }
                     }
                 );
@@ -629,70 +809,48 @@ function startRevealAnimations() {
 
     revealElements.forEach(
         function (element) {
-            observer.observe(
-                element
-            );
+            observer.observe(element);
         }
     );
 }
 
 
 // =========================================================
-// 13. COUNTDOWN
+// 12. COUNTDOWN
 // =========================================================
 
 const daysElement =
-    document.getElementById(
-        "days"
-    );
+    document.getElementById("days");
 
 const hoursElement =
-    document.getElementById(
-        "hours"
-    );
+    document.getElementById("hours");
 
 const minutesElement =
-    document.getElementById(
-        "minutes"
-    );
+    document.getElementById("minutes");
 
 const secondsElement =
-    document.getElementById(
-        "seconds"
-    );
+    document.getElementById("seconds");
 
 const countdownMessage =
-    document.getElementById(
-        "countdownMessage"
-    );
+    document.getElementById("countdownMessage");
 
 function addLeadingZero(number) {
-    return String(number)
-        .padStart(
-            2,
-            "0"
-        );
+    return String(number).padStart(2, "0");
 }
 
 function updateCountdown() {
-    const now =
-        new Date();
-
     const difference =
         WEDDING_DATE.getTime()
         -
-        now.getTime();
+        new Date().getTime();
 
     if (difference <= 0) {
         daysElement.textContent =
             "00";
-
         hoursElement.textContent =
             "00";
-
         minutesElement.textContent =
             "00";
-
         secondsElement.textContent =
             "00";
 
@@ -703,83 +861,37 @@ function updateCountdown() {
     }
 
     const totalSeconds =
-        Math.floor(
-            difference / 1000
-        );
+        Math.floor(difference / 1000);
 
     const days =
         Math.floor(
-            totalSeconds
-            /
-            (
-                60
-                *
-                60
-                *
-                24
-            )
+            totalSeconds / 86400
         );
 
     const hours =
         Math.floor(
-            (
-                totalSeconds
-                %
-                (
-                    60
-                    *
-                    60
-                    *
-                    24
-                )
-            )
-            /
-            (
-                60
-                *
-                60
-            )
+            (totalSeconds % 86400) / 3600
         );
 
     const minutes =
         Math.floor(
-            (
-                totalSeconds
-                %
-                (
-                    60
-                    *
-                    60
-                )
-            )
-            /
-            60
+            (totalSeconds % 3600) / 60
         );
 
     const seconds =
-        totalSeconds
-        %
-        60;
+        totalSeconds % 60;
 
     daysElement.textContent =
-        addLeadingZero(
-            days
-        );
+        addLeadingZero(days);
 
     hoursElement.textContent =
-        addLeadingZero(
-            hours
-        );
+        addLeadingZero(hours);
 
     minutesElement.textContent =
-        addLeadingZero(
-            minutes
-        );
+        addLeadingZero(minutes);
 
     secondsElement.textContent =
-        addLeadingZero(
-            seconds
-        );
+        addLeadingZero(seconds);
 
     countdownMessage.textContent =
         "Until we say “I do”.";
@@ -794,7 +906,7 @@ setInterval(
 
 
 // =========================================================
-// 14. GOOGLE MAPS
+// 13. MAPS
 // =========================================================
 
 churchLocation.addEventListener(
@@ -821,23 +933,23 @@ hotelLocation.addEventListener(
 
 
 // =========================================================
-// 15. ADD TO CALENDAR
+// 14. ADD TO CALENDAR
 // =========================================================
 
 addToCalendar.addEventListener(
     "click",
     function () {
         const calendarContent =
-            `BEGIN:VCALENDAR
+`BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Susini and Achila Wedding//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
-UID:susini-achila-wedding-20260516
-DTSTAMP:20260516T000000Z
-DTSTART;VALUE=DATE:20260516
-DTEND;VALUE=DATE:20260517
+UID:susini-achila-wedding-20270516
+DTSTAMP:20270516T000000Z
+DTSTART;VALUE=DATE:20270516
+DTEND;VALUE=DATE:20270517
 SUMMARY:Susini & Achila's Wedding
 LOCATION:Negombo, Sri Lanka
 DESCRIPTION:Susini & Achila's Wedding\\n\\nChurch Mass - 9:00 AM\\nSt. Jude's Church, Daluwakotuwa\\n\\nWedding Reception - 11:00 AM\\nOlanro Hotel, Negombo
@@ -846,9 +958,7 @@ END:VCALENDAR`;
 
         const calendarBlob =
             new Blob(
-                [
-                    calendarContent
-                ],
+                [calendarContent],
                 {
                     type:
                         "text/calendar;charset=utf-8"
@@ -861,9 +971,7 @@ END:VCALENDAR`;
             );
 
         const downloadLink =
-            document.createElement(
-                "a"
-            );
+            document.createElement("a");
 
         downloadLink.href =
             calendarUrl;
@@ -889,7 +997,7 @@ END:VCALENDAR`;
 
 
 // =========================================================
-// 16. RSVP ATTENDANCE SELECTION
+// 15. ATTENDANCE SELECTION
 // =========================================================
 
 const attendanceOptions =
@@ -902,20 +1010,10 @@ attendanceOptions.forEach(
         radio.addEventListener(
             "change",
             function () {
-                if (
+                guestCountGroup.style.display =
                     this.value === "No"
-                ) {
-                    guestCountGroup
-                        .style
-                        .display =
-                        "none";
-                }
-                else {
-                    guestCountGroup
-                        .style
-                        .display =
-                        "block";
-                }
+                        ? "none"
+                        : "block";
             }
         );
     }
@@ -923,55 +1021,151 @@ attendanceOptions.forEach(
 
 
 // =========================================================
-// 17. SHOW FORM MESSAGE
+// 16. RELIABLE RSVP SUBMISSION
 // =========================================================
 
-function showFormMessage(
-    message,
-    success
-) {
-    formResult.textContent =
-        message;
-
-    formResult.style.display =
-        "block";
-
-    formResult.style.color =
-        success
-            ? "#52675a"
-            : "#9a4d4d";
-}
-
-
-// =========================================================
-// 18. ENABLE / DISABLE SUBMIT BUTTON
-// =========================================================
-
-function setSubmitState(
-    isSending
-) {
-    if (isSending) {
-        submitButton.disabled =
-            true;
-
-        submitButton.textContent =
-            "SENDING...";
-
-        submitButton.style.opacity =
-            "0.65";
-
-        submitButton.style.cursor =
-            "not-allowed";
-
-        return;
+function createRequestId() {
+    if (
+        window.crypto
+        &&
+        typeof window.crypto.randomUUID === "function"
+    ) {
+        return window.crypto.randomUUID();
     }
 
-    updateSubmitAvailability();
+    return "rsvp-"
+        +
+        Date.now()
+        +
+        "-"
+        +
+        Math.floor(
+            Math.random() * 1000000
+        );
 }
+
+function submitRsvpToGoogle(formData) {
+    return new Promise(
+        function (resolve, reject) {
+            const requestId =
+                createRequestId();
+
+            formData.clientRequestId =
+                requestId;
+
+            const timeout =
+                setTimeout(
+                    function () {
+                        if (
+                            pendingSubmission
+                            &&
+                            pendingSubmission.requestId === requestId
+                        ) {
+                            pendingSubmission =
+                                null;
+                        }
+
+                        reject(
+                            new Error(
+                                "RSVP confirmation timed out."
+                            )
+                        );
+                    },
+                    20000
+                );
+
+            pendingSubmission = {
+                requestId:
+                    requestId,
+                resolve:
+                    resolve,
+                reject:
+                    reject,
+                timeout:
+                    timeout
+            };
+
+            const postForm =
+                document.createElement("form");
+
+            postForm.method =
+                "POST";
+
+            postForm.action =
+                RSVP_API_URL;
+
+            postForm.target =
+                "rsvpSubmitFrame";
+
+            postForm.style.display =
+                "none";
+
+            Object.entries(formData).forEach(
+                function ([key, value]) {
+                    const input =
+                        document.createElement("input");
+
+                    input.type =
+                        "hidden";
+
+                    input.name =
+                        key;
+
+                    input.value =
+                        String(value ?? "");
+
+                    postForm.appendChild(input);
+                }
+            );
+
+            document.body.appendChild(
+                postForm
+            );
+
+            postForm.submit();
+
+            document.body.removeChild(
+                postForm
+            );
+        }
+    );
+}
+
+window.addEventListener(
+    "message",
+    function (event) {
+        const data =
+            event.data;
+
+        if (
+            !data
+            ||
+            data.type !== "wedding-rsvp-result"
+            ||
+            !pendingSubmission
+            ||
+            data.requestId !== pendingSubmission.requestId
+        ) {
+            return;
+        }
+
+        clearTimeout(
+            pendingSubmission.timeout
+        );
+
+        const resolver =
+            pendingSubmission.resolve;
+
+        pendingSubmission =
+            null;
+
+        resolver(data);
+    }
+);
 
 
 // =========================================================
-// 19. SUBMIT RSVP TO GOOGLE SHEETS
+// 17. RSVP SUBMIT
 // =========================================================
 
 rsvpForm.addEventListener(
@@ -979,11 +1173,22 @@ rsvpForm.addEventListener(
     async function (event) {
         event.preventDefault();
 
+        if (submitInFlight) {
+            return;
+        }
+
         if (!guestIsVerified) {
             showFormMessage(
-                invitationId
-                    ? "Please wait for your invitation to be verified. If this continues, refresh the page."
-                    : "Please open your personal invitation link to send an RSVP.",
+                "Please wait for your invitation to be verified.",
+                false
+            );
+
+            return;
+        }
+
+        if (deadlineClosed) {
+            showFormMessage(
+                "RSVP is now closed.",
                 false
             );
 
@@ -1007,9 +1212,7 @@ rsvpForm.addEventListener(
         let numberAttending =
             0;
 
-        if (
-            attendance.value === "Yes"
-        ) {
+        if (attendance.value === "Yes") {
             numberAttending =
                 parseInt(
                     guestCount.value,
@@ -1017,9 +1220,7 @@ rsvpForm.addEventListener(
                 );
 
             if (
-                !Number.isInteger(
-                    numberAttending
-                )
+                !Number.isInteger(numberAttending)
                 ||
                 numberAttending < 1
             ) {
@@ -1031,10 +1232,7 @@ rsvpForm.addEventListener(
                 return;
             }
 
-            if (
-                numberAttending >
-                maxGuests
-            ) {
+            if (numberAttending > maxGuests) {
                 showFormMessage(
                     `Maximum allowed guests: ${maxGuests}.`,
                     false
@@ -1044,92 +1242,92 @@ rsvpForm.addEventListener(
             }
         }
 
-        const guestMessageElement =
-            document.getElementById(
-                "guestMessage"
-            );
+        submitInFlight =
+            true;
 
-        const guestMessage =
-            guestMessageElement
-                .value
-                .trim();
-
-        const formData =
-            new URLSearchParams();
-
-        formData.append(
-            "invitationId",
-            invitationId
-        );
-
-        formData.append(
-            "attendance",
-            attendance.value
-        );
-
-        formData.append(
-            "numberAttending",
-            numberAttending
-        );
-
-        formData.append(
-            "message",
-            guestMessage
-        );
-
-        setSubmitState(
-            true
-        );
+        updateSubmitAvailability();
 
         formResult.style.display =
             "none";
 
         try {
-            await fetch(
-                RSVP_API_URL,
-                {
-                    method:
-                        "POST",
+            const response =
+                await submitRsvpToGoogle(
+                    {
+                        invitationId:
+                            invitationId,
+                        attendance:
+                            attendance.value,
+                        numberAttending:
+                            numberAttending,
+                        message:
+                            guestMessageElement.value.trim()
+                    }
+                );
 
-                    mode:
-                        "no-cors",
+            if (!response.success) {
+                throw new Error(
+                    response.message
+                    ||
+                    "Your RSVP could not be saved."
+                );
+            }
 
-                    headers: {
-                        "Content-Type":
-                            "application/x-www-form-urlencoded"
-                    },
+            const savedRsvp = {
+                exists:
+                    true,
+                attendance:
+                    response.attendance,
+                numberAttending:
+                    Number(response.numberAttending || 0),
+                message:
+                    guestMessageElement.value.trim(),
+                updatedAt:
+                    response.updatedAt || ""
+            };
 
-                    body:
-                        formData.toString()
-                }
+            updateExistingRsvpBanner(
+                savedRsvp
             );
 
-            if (
-                attendance.value === "Yes"
-            ) {
+            if (response.attendance === "Yes") {
                 showFormMessage(
-                    "Thank you! Your RSVP has been received. We are delighted that you will be joining us.",
+                    "Thank you! Your RSVP has been saved successfully. We are delighted that you will be joining us.",
                     true
                 );
             }
             else {
                 showFormMessage(
-                    "Thank you for letting us know. Your RSVP has been received, and you will be missed on our special day.",
+                    "Thank you for letting us know. Your RSVP has been saved successfully, and you will be missed on our special day.",
                     true
                 );
             }
 
-            guestMessageElement.value =
-                "";
+            submitButton.textContent =
+                "RSVP SAVED ✓";
+
+            submitButton.classList.add(
+                "is-saved"
+            );
 
             formResult.scrollIntoView(
                 {
                     behavior:
                         "smooth",
-
                     block:
                         "center"
                 }
+            );
+
+            setTimeout(
+                function () {
+                    submitButton.classList.remove(
+                        "is-saved"
+                    );
+
+                    updateSubmitAvailability();
+                },
+                2500
             );
         }
         catch (error) {
@@ -1139,14 +1337,17 @@ rsvpForm.addEventListener(
             );
 
             showFormMessage(
-                "Sorry, we could not send your RSVP. Please check your internet connection and try again.",
+                error.message
+                ||
+                "Sorry, we could not save your RSVP. Please try again.",
                 false
             );
         }
         finally {
-            setSubmitState(
-                false
-            );
+            submitInFlight =
+                false;
+
+            updateSubmitAvailability();
         }
     }
 );

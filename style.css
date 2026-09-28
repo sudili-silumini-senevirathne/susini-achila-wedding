@@ -1401,13 +1401,7 @@ footer {
 }
 
 /* =========================================================
-   REAL WEDDING PHOTOS
-========================================================= */
-
-
-/* =========================================================
-   MAIN COUPLE PHOTO
-   Keep the complete image visible
+   REAL WEDDING PHOTOS - FINAL
 ========================================================= */
 
 .feature-photo {
@@ -1420,21 +1414,15 @@ footer {
     overflow: hidden;
 }
 
-
-    .feature-photo img {
-        display: block;
-        width: 100%;
-        height: auto;
-        max-height: 700px;
-        object-fit: contain;
-        object-position: center;
-        margin: auto;
-    }
-
-
-/* =========================================================
-   GALLERY - FINAL CLEAN VERSION
-========================================================= */
+.feature-photo img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 700px;
+    object-fit: contain;
+    object-position: center;
+    margin: auto;
+}
 
 .gallery-grid {
     margin-top: 55px;
@@ -1443,9 +1431,6 @@ footer {
     grid-template-rows: repeat(2, 330px);
     gap: 17px;
 }
-
-
-/* REMOVE ALL FRAMES */
 
 .gallery-photo {
     width: 100%;
@@ -1458,29 +1443,18 @@ footer {
     border-radius: 0;
 }
 
-
-/* =========================================================
-   LARGE LEFT PHOTO
-========================================================= */
-
 .gallery-main {
     grid-row: 1 / 3;
 }
 
-
-    .gallery-main img {
-        display: block;
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        object-position: center;
-        margin: auto;
-    }
-
-
-/* =========================================================
-   TOP + BOTTOM RIGHT PHOTOS
-========================================================= */
+.gallery-main img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    margin: auto;
+}
 
 .gallery-photo:not(.gallery-main) img {
     display: block;
@@ -1491,22 +1465,13 @@ footer {
     transition: transform 0.5s ease;
 }
 
-
-/* TOP RIGHT */
-
 .gallery-photo:nth-child(2) img {
     object-position: center 38%;
 }
 
-
-/* BOTTOM RIGHT */
-
 .gallery-photo:nth-child(3) img {
     object-position: center 50%;
 }
-
-
-/* SMALL HOVER EFFECT */
 
 .gallery-photo:not(.gallery-main):hover img {
     transform: scale(1.02);
@@ -1514,17 +1479,204 @@ footer {
 
 
 /* =========================================================
-   MOBILE
+   MUSIC CONTROL
+========================================================= */
+
+.music-control {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 178px;
+    padding: 11px 16px 11px 12px;
+    border: 1px solid rgba(82, 103, 90, 0.24);
+    border-radius: 999px;
+    background: rgba(250, 247, 239, 0.94);
+    color: var(--sage-dark);
+    box-shadow: 0 12px 35px rgba(52, 70, 59, 0.14);
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.music-control:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 42px rgba(52, 70, 59, 0.18);
+}
+
+.music-control.is-playing {
+    background: rgba(227, 234, 223, 0.97);
+}
+
+.music-control.is-unavailable {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.music-note {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 34px;
+    border-radius: 50%;
+    background: var(--sage-dark);
+    color: white;
+    font-family: var(--serif);
+    font-size: 18px;
+    line-height: 1;
+}
+
+.music-control.is-playing .music-note {
+    animation: musicPulse 1.8s ease-in-out infinite;
+}
+
+.music-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    line-height: 1.15;
+}
+
+.music-copy strong {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+}
+
+.music-copy small {
+    margin-top: 4px;
+    font-family: var(--serif);
+    font-size: 12px;
+    font-style: italic;
+    color: var(--text-light);
+}
+
+@keyframes musicPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.08);
+    }
+}
+
+
+/* =========================================================
+   RSVP - SAVED STATUS / DEADLINE / RELIABLE CONFIRMATION
+========================================================= */
+
+.rsvp-deadline {
+    max-width: 520px;
+    margin: -22px auto 35px;
+    padding: 12px 16px;
+    border-top: 1px solid rgba(133, 154, 132, 0.26);
+    border-bottom: 1px solid rgba(133, 154, 132, 0.26);
+    font-family: var(--serif);
+    font-size: 16px;
+    font-style: italic;
+    color: var(--sage-dark);
+}
+
+.existing-rsvp-status {
+    max-width: 580px;
+    margin: 0 auto 32px;
+    padding: 22px 24px;
+    text-align: center;
+    border: 1px solid rgba(133, 154, 132, 0.28);
+    background: rgba(227, 234, 223, 0.43);
+}
+
+.existing-rsvp-label {
+    margin-bottom: 8px;
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    color: var(--sage-medium);
+}
+
+.existing-rsvp-main {
+    font-family: var(--serif);
+    font-size: 21px;
+    font-weight: 500;
+    color: var(--sage-dark);
+}
+
+.existing-rsvp-note {
+    margin-top: 8px;
+    font-family: var(--serif);
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--text-light);
+}
+
+.rsvp-security-note {
+    margin: 13px auto 0;
+    text-align: center;
+    font-family: var(--serif);
+    font-size: 13px;
+    font-style: italic;
+    color: var(--text-light);
+}
+
+.submit-button:disabled {
+    cursor: not-allowed;
+}
+
+.submit-button.is-saved {
+    background: var(--sage-medium);
+    border-color: var(--sage-medium);
+}
+
+.form-result.success {
+    color: var(--sage-dark) !important;
+}
+
+.form-result.error {
+    color: #9a4d4d !important;
+}
+
+.rsvp-submit-frame {
+    position: fixed;
+    width: 1px;
+    height: 1px;
+    left: -9999px;
+    bottom: -9999px;
+    border: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   MOBILE FINAL POLISH
 ========================================================= */
 
 @media (max-width: 650px) {
+
+    .feature-photo {
+        padding: 6px;
+    }
+
+    .feature-photo img {
+        width: 100%;
+        height: auto;
+        max-height: none;
+        object-fit: contain;
+        object-position: center;
+    }
 
     .gallery-grid {
         display: flex;
         flex-direction: column;
         gap: 15px;
     }
-
 
     .gallery-photo {
         width: 100%;
@@ -1535,19 +1687,16 @@ footer {
         box-shadow: none !important;
     }
 
-
     .gallery-main {
         height: 520px;
     }
 
-
-        .gallery-main img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            object-position: center;
-        }
-
+    .gallery-main img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
+    }
 
     .gallery-photo:not(.gallery-main) img {
         width: 100%;
@@ -1556,21 +1705,48 @@ footer {
         object-position: center;
     }
 
-
     .gallery-photo:nth-child(2) img {
         object-position: center 35%;
     }
 
-
     .gallery-photo:nth-child(3) img {
         object-position: center 50%;
     }
+
+    .music-control {
+        right: 14px;
+        bottom: 14px;
+        min-width: 0;
+        max-width: calc(100vw - 28px);
+        padding: 9px 12px 9px 9px;
+    }
+
+    .music-note {
+        width: 31px;
+        height: 31px;
+        flex-basis: 31px;
+    }
+
+    .music-copy strong {
+        font-size: 8px;
+    }
+
+    .music-copy small {
+        font-size: 11px;
+    }
+
+    .existing-rsvp-status {
+        padding: 19px 16px;
+    }
+
+    .existing-rsvp-main {
+        font-size: 19px;
+    }
+
+    .rsvp-security-note {
+        padding: 0 10px;
+    }
 }
-
-
-/* =========================================================
-   SMALL PHONES
-========================================================= */
 
 @media (max-width: 380px) {
 
@@ -1578,8 +1754,37 @@ footer {
         height: 360px;
     }
 
-
     .gallery-main {
         height: 470px;
+    }
+
+    .music-copy small {
+        display: none;
+    }
+
+    .music-control {
+        min-width: 145px;
+    }
+}
+
+
+/* =========================================================
+   ACCESSIBILITY - REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto;
+    }
+
+    .reveal,
+    .reveal.visible,
+    .music-control,
+    .gallery-photo img,
+    .open-button {
+        transition: none !important;
+        animation: none !important;
+        transform: none !important;
     }
 }

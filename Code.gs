@@ -822,7 +822,7 @@ function generateInvitationLinks() {
         );
 
       const whatsappMessage =
-        "You are warmly invited to celebrate the wedding of Susini & Achila on 16 May 2027. "
+        "You are warmly invited to celebrate the wedding of Susini & Achila on 2027.05.16. "
         +
         "Your personal invitation: "
         +

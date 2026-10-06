@@ -26,18 +26,18 @@ const HOTEL_MAP_URL =
 // =========================================================
 
 // Complete music + automatic-scroll experience:
-// 3 minutes 30 seconds from OPEN INVITATION.
+// approximately 4 minutes 25.9 seconds from OPEN INVITATION.
 //
 // 0:00  Music starts softly
 // 0:01  Cover opens
 // 0:03  Slow automatic scroll begins
-// 3:22  Music starts fading out
-// 3:30  Page reaches the bottom and music stops
-const EXPERIENCE_DURATION_MS = 210000; // 3 minutes 30 seconds
+// 4:15  Music starts fading out
+// 4:25.9 Page reaches the bottom and music ends softly
+const EXPERIENCE_DURATION_MS = 265872; // Full uploaded song: about 4 minutes 25.9 seconds
 
 const MUSIC_TARGET_VOLUME = 0.42;
 const MUSIC_FADE_IN_MS = 3500;
-const MUSIC_FADE_OUT_MS = 8000;
+const MUSIC_FADE_OUT_MS = 10000;
 
 const AUTO_SCROLL_ENABLED = true;
 const AUTO_SCROLL_START_DELAY_MS = 1800;

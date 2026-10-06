@@ -46,8 +46,8 @@ const INVITATION_BASE_URL =
 // it does not block your testing. Change ENFORCE to true when needed.
 const RSVP_DEADLINE = {
   ENFORCE: false,
-  DATE: new Date("2026-04-30T23:59:59+05:30"),
-  DISPLAY_TEXT: "Kindly RSVP by 30 April 2026."
+  DATE: new Date("2027-04-30T23:59:59+05:30"),
+  DISPLAY_TEXT: "Kindly RSVP by 30 April 2027."
 };
 
 
@@ -822,7 +822,7 @@ function generateInvitationLinks() {
         );
 
       const whatsappMessage =
-        "You are warmly invited to celebrate the wedding of Susini & Achila on 16 May 2026. "
+        "You are warmly invited to celebrate the wedding of Susini & Achila on 16 May 2027. "
         +
         "Your personal invitation: "
         +

@@ -1,6 +1,8 @@
-SUSINI & ACHILA - FINAL WEDDING INVITATION PROJECT
+SUSINI & ACHILA - FINAL WEDDING INVITATION PROJECT - 2027
 
-This package includes the REAL uploaded wedding images and music.
+Wedding date: 16 May 2027
+
+This package includes the real uploaded wedding images and the newly uploaded A Thousand Years audio file.
 
 Project structure:
 - index.html
@@ -14,18 +16,19 @@ Project structure:
     photo3.jpeg
 - audio/
     a-thousand-years.mp3
-- Code.gs (Google Apps Script backend, if included)
+- Code.gs
 
 IMPORTANT:
 1. Replace your existing project files/folders with these.
-2. Keep the filenames exactly as they are.
+2. Keep all filenames exactly as they are.
 3. Commit All -> Push.
 4. Wait for GitHub Pages to deploy.
 5. Open the invitation and press Ctrl+F5.
 
 Experience timing:
+- Wedding date is 16 May 2027.
 - Music begins after OPEN INVITATION.
 - Slow automatic scroll begins after the cover opens.
-- Music fades during the final 8 seconds.
+- Music starts fading during the final 8 seconds.
 - Music and automatic scroll finish at 3 minutes 30 seconds.
 - If the guest manually scrolls, auto-scroll stops so it never fights the guest.

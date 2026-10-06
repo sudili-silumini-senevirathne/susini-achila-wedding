@@ -41,6 +41,7 @@ const MUSIC_FADE_OUT_MS = 10000;
 
 const AUTO_SCROLL_ENABLED = true;
 const AUTO_SCROLL_START_DELAY_MS = 1800;
+const AUTO_SCROLL_RESUME_DELAY_MS = 1600;
 const AUTO_SCROLL_END_PADDING_PX = 20;
 
 let experienceEndsAt = null;
@@ -859,24 +860,28 @@ function finishWeddingExperience() {
         musicStopTimer = null;
     }
 
-    if (!autoScrollStoppedByGuest) {
-        if (autoScrollFrame) {
-            cancelAnimationFrame(autoScrollFrame);
-            autoScrollFrame = null;
-        }
-
-        window.scrollTo(
-            0,
-            Math.max(
-                0,
-                document.documentElement.scrollHeight
-                -
-                window.innerHeight
-                -
-                AUTO_SCROLL_END_PADDING_PX
-            )
-        );
+    if (autoScrollResumeTimer) {
+        clearTimeout(autoScrollResumeTimer);
+        autoScrollResumeTimer = null;
     }
+
+    if (autoScrollFrame) {
+        cancelAnimationFrame(autoScrollFrame);
+        autoScrollFrame = null;
+    }
+
+    // Finish exactly at the bottom together with the song.
+    window.scrollTo(
+        0,
+        Math.max(
+            0,
+            document.documentElement.scrollHeight
+            -
+            window.innerHeight
+            -
+            AUTO_SCROLL_END_PADDING_PX
+        )
+    );
 
     document.documentElement
         .classList
@@ -890,7 +895,7 @@ function finishWeddingExperience() {
         weddingAudio.currentTime = 0;
     }
     catch {
-        // Pausing still works even if seeking is unavailable.
+        // Pausing is enough if seeking is unavailable.
     }
 
     weddingAudio.volume =
@@ -946,7 +951,21 @@ function startFixedWeddingExperienceTimer() {
 
 let autoScrollFrame = null;
 let autoScrollStarted = false;
-let autoScrollStoppedByGuest = false;
+let autoScrollPausedByGuest = false;
+let autoScrollResumeTimer = null;
+
+
+/*
+    AUTO-SCROLL BEHAVIOR
+
+    - Starts automatically after the invitation opens.
+    - Starts a little faster than the previous version.
+    - If the guest manually scrolls/swipes, auto-scroll pauses.
+    - After the guest stops interacting for 1.6 seconds,
+      auto-scroll automatically continues from the new position.
+    - Remaining distance/time is recalculated so the page still
+      reaches the bottom at the same time as the song ends.
+*/
 
 
 function getAutoScrollDurationMs() {
@@ -967,12 +986,42 @@ function getAutoScrollDurationMs() {
 }
 
 
-function stopAutoScrollByGuest() {
-    if (!autoScrollStarted) {
-        return;
-    }
+function clearAutoScrollResumeTimer() {
+    if (autoScrollResumeTimer) {
+        clearTimeout(
+            autoScrollResumeTimer
+        );
 
-    autoScrollStoppedByGuest =
+        autoScrollResumeTimer =
+            null;
+    }
+}
+
+
+function scheduleAutoScrollResume() {
+    clearAutoScrollResumeTimer();
+
+    autoScrollResumeTimer =
+        setTimeout(
+            function () {
+                autoScrollPausedByGuest =
+                    false;
+
+                startAutomaticSlowScroll(
+                    true
+                );
+            },
+            AUTO_SCROLL_RESUME_DELAY_MS
+        );
+}
+
+
+function pauseAutoScrollForGuest() {
+    /*
+        Even if the auto-scroll has not started yet, remember
+        the manual interaction and wait until the guest stops.
+    */
+    autoScrollPausedByGuest =
         true;
 
     if (autoScrollFrame) {
@@ -989,16 +1038,18 @@ function stopAutoScrollByGuest() {
         .remove(
             "auto-scroll-active"
         );
+
+    scheduleAutoScrollResume();
 }
 
 
-function startAutomaticSlowScroll() {
+function startAutomaticSlowScroll(
+    isResume = false
+) {
     if (
         !AUTO_SCROLL_ENABLED
         ||
-        autoScrollStoppedByGuest
-        ||
-        autoScrollStarted
+        autoScrollPausedByGuest
     ) {
         return;
     }
@@ -1011,6 +1062,17 @@ function startAutomaticSlowScroll() {
         ).matches
     ) {
         return;
+    }
+
+    clearAutoScrollResumeTimer();
+
+    if (autoScrollFrame) {
+        cancelAnimationFrame(
+            autoScrollFrame
+        );
+
+        autoScrollFrame =
+            null;
     }
 
     const startY =
@@ -1027,16 +1089,32 @@ function startAutomaticSlowScroll() {
         );
 
     if (
-        maxScroll <= startY + 10
+        maxScroll <= startY + 5
     ) {
+        window.scrollTo(
+            0,
+            maxScroll
+        );
+
+        return;
+    }
+
+    const duration =
+        getAutoScrollDurationMs();
+
+    if (
+        duration <= 1000
+    ) {
+        window.scrollTo(
+            0,
+            maxScroll
+        );
+
         return;
     }
 
     autoScrollStarted =
         true;
-
-    const duration =
-        getAutoScrollDurationMs();
 
     const startTime =
         performance.now();
@@ -1049,7 +1127,7 @@ function startAutomaticSlowScroll() {
 
     function frame(now) {
         if (
-            autoScrollStoppedByGuest
+            autoScrollPausedByGuest
         ) {
             return;
         }
@@ -1066,18 +1144,17 @@ function startAutomaticSlowScroll() {
                 duration
             );
 
+        /*
+            Faster/more natural at the beginning than the old
+            cosine curve, but still soft near the end.
+        */
         const eased =
-            -(
-                Math.cos(
-                    Math.PI
-                    *
-                    progress
-                )
-                -
-                1
-            )
-            /
-            2;
+            1
+            -
+            Math.pow(
+                1 - progress,
+                1.15
+            );
 
         const currentMaxScroll =
             Math.max(
@@ -1105,7 +1182,11 @@ function startAutomaticSlowScroll() {
             targetY
         );
 
-        if (progress < 1) {
+        if (
+            progress < 1
+            &&
+            !autoScrollPausedByGuest
+        ) {
             autoScrollFrame =
                 requestAnimationFrame(
                     frame
@@ -1130,21 +1211,38 @@ function startAutomaticSlowScroll() {
 }
 
 
+/*
+    Every manual movement resets the 1.6-second wait.
+    Therefore auto-scroll restarts only after the guest has
+    actually stopped scrolling/swiping.
+*/
+
 window.addEventListener(
     "wheel",
-    stopAutoScrollByGuest,
+    pauseAutoScrollForGuest,
     {
         passive: true
     }
 );
 
+
 window.addEventListener(
     "touchstart",
-    stopAutoScrollByGuest,
+    pauseAutoScrollForGuest,
     {
         passive: true
     }
 );
+
+
+window.addEventListener(
+    "touchmove",
+    pauseAutoScrollForGuest,
+    {
+        passive: true
+    }
+);
+
 
 window.addEventListener(
     "keydown",
@@ -1164,7 +1262,7 @@ window.addEventListener(
                 event.key
             )
         ) {
-            stopAutoScrollByGuest();
+            pauseAutoScrollForGuest();
         }
     }
 );

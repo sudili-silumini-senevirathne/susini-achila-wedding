@@ -19,3 +19,13 @@ IMPORTANT:
 3. Commit All -> Push.
 4. Wait for GitHub Pages deployment.
 5. Refresh with Ctrl+F5.
+
+
+AUTO-SCROLL RESUME UPDATE
+-------------------------
+- Auto-scroll moves a little faster at the beginning.
+- Manual wheel/keyboard/touch scrolling temporarily pauses auto-scroll.
+- 1.6 seconds after the guest stops manually scrolling, auto-scroll resumes.
+- It resumes from the guest's current position.
+- Remaining time is recalculated so it still ends with the song.
+- Final 10-second music fade-out remains unchanged.

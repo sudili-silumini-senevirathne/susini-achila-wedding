@@ -25,8 +25,8 @@ const HOTEL_MAP_URL =
 // WEDDING EXPERIENCE SETTINGS
 // =========================================================
 
-// Recommended total experience:
-// 3 minutes 30 seconds from clicking OPEN INVITATION.
+// Complete music + automatic-scroll experience:
+// 3 minutes 30 seconds from OPEN INVITATION.
 //
 // 0:00  Music starts softly
 // 0:01  Cover opens
@@ -850,35 +850,19 @@ weddingAudio.addEventListener(
 
 function finishWeddingExperience() {
     if (musicFadeOutTimer) {
-        clearTimeout(
-            musicFadeOutTimer
-        );
-
-        musicFadeOutTimer =
-            null;
+        clearTimeout(musicFadeOutTimer);
+        musicFadeOutTimer = null;
     }
 
     if (musicStopTimer) {
-        clearTimeout(
-            musicStopTimer
-        );
-
-        musicStopTimer =
-            null;
+        clearTimeout(musicStopTimer);
+        musicStopTimer = null;
     }
 
-    // If the guest has not manually taken control of the page,
-    // make sure the final position is exactly the bottom.
-    if (
-        !autoScrollStoppedByGuest
-    ) {
+    if (!autoScrollStoppedByGuest) {
         if (autoScrollFrame) {
-            cancelAnimationFrame(
-                autoScrollFrame
-            );
-
-            autoScrollFrame =
-                null;
+            cancelAnimationFrame(autoScrollFrame);
+            autoScrollFrame = null;
         }
 
         window.scrollTo(
@@ -903,12 +887,10 @@ function finishWeddingExperience() {
     weddingAudio.pause();
 
     try {
-        weddingAudio.currentTime =
-            0;
+        weddingAudio.currentTime = 0;
     }
     catch {
-        // Some browsers may not allow seeking until metadata
-        // has loaded. Pausing is still enough.
+        // Pausing still works even if seeking is unavailable.
     }
 
     weddingAudio.volume =
@@ -925,24 +907,17 @@ function startFixedWeddingExperienceTimer() {
         EXPERIENCE_DURATION_MS;
 
     if (musicFadeOutTimer) {
-        clearTimeout(
-            musicFadeOutTimer
-        );
+        clearTimeout(musicFadeOutTimer);
     }
 
     if (musicStopTimer) {
-        clearTimeout(
-            musicStopTimer
-        );
+        clearTimeout(musicStopTimer);
     }
 
-    // Start a gentle fade during the final 8 seconds.
     musicFadeOutTimer =
         setTimeout(
             function () {
-                if (
-                    !weddingAudio.paused
-                ) {
+                if (!weddingAudio.paused) {
                     fadeMusicTo(
                         0,
                         MUSIC_FADE_OUT_MS
@@ -957,7 +932,6 @@ function startFixedWeddingExperienceTimer() {
             )
         );
 
-    // At exactly 3:30, stop the song and finish the scroll.
     musicStopTimer =
         setTimeout(
             finishWeddingExperience,
@@ -976,9 +950,6 @@ let autoScrollStoppedByGuest = false;
 
 
 function getAutoScrollDurationMs() {
-    // The scroll always uses the time remaining until the
-    // 3:30 experience end point. This keeps music and scroll
-    // synchronized even though scrolling begins after the cover.
     if (
         Number.isFinite(
             experienceEndsAt
@@ -1206,8 +1177,6 @@ window.addEventListener(
 openButton.addEventListener(
     "click",
     function () {
-        // Start the shared 3:30 clock immediately when the guest
-        // presses OPEN INVITATION.
         startFixedWeddingExperienceTimer();
 
         startWeddingMusic();
@@ -1445,7 +1414,7 @@ addToCalendar.addEventListener(
     "click",
     function () {
         const calendarContent =
-`BEGIN:VCALENDAR
+            `BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Susini and Achila Wedding//EN
 CALSCALE:GREGORIAN

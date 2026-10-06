@@ -25,13 +25,27 @@ const HOTEL_MAP_URL =
 // WEDDING EXPERIENCE SETTINGS
 // =========================================================
 
+// Recommended total experience:
+// 3 minutes 30 seconds from clicking OPEN INVITATION.
+//
+// 0:00  Music starts softly
+// 0:01  Cover opens
+// 0:03  Slow automatic scroll begins
+// 3:22  Music starts fading out
+// 3:30  Page reaches the bottom and music stops
+const EXPERIENCE_DURATION_MS = 210000; // 3 minutes 30 seconds
+
 const MUSIC_TARGET_VOLUME = 0.42;
 const MUSIC_FADE_IN_MS = 3500;
+const MUSIC_FADE_OUT_MS = 8000;
 
 const AUTO_SCROLL_ENABLED = true;
 const AUTO_SCROLL_START_DELAY_MS = 1800;
-const AUTO_SCROLL_FALLBACK_DURATION_MS = 270000;
 const AUTO_SCROLL_END_PADDING_PX = 20;
+
+let experienceEndsAt = null;
+let musicFadeOutTimer = null;
+let musicStopTimer = null;
 
 
 // =========================================================
@@ -831,7 +845,129 @@ weddingAudio.addEventListener(
 
 
 // =========================================================
-// 10. AUTOMATIC SLOW SCROLL
+// 10. FIXED 3:30 EXPERIENCE TIMER
+// =========================================================
+
+function finishWeddingExperience() {
+    if (musicFadeOutTimer) {
+        clearTimeout(
+            musicFadeOutTimer
+        );
+
+        musicFadeOutTimer =
+            null;
+    }
+
+    if (musicStopTimer) {
+        clearTimeout(
+            musicStopTimer
+        );
+
+        musicStopTimer =
+            null;
+    }
+
+    // If the guest has not manually taken control of the page,
+    // make sure the final position is exactly the bottom.
+    if (
+        !autoScrollStoppedByGuest
+    ) {
+        if (autoScrollFrame) {
+            cancelAnimationFrame(
+                autoScrollFrame
+            );
+
+            autoScrollFrame =
+                null;
+        }
+
+        window.scrollTo(
+            0,
+            Math.max(
+                0,
+                document.documentElement.scrollHeight
+                -
+                window.innerHeight
+                -
+                AUTO_SCROLL_END_PADDING_PX
+            )
+        );
+    }
+
+    document.documentElement
+        .classList
+        .remove(
+            "auto-scroll-active"
+        );
+
+    weddingAudio.pause();
+
+    try {
+        weddingAudio.currentTime =
+            0;
+    }
+    catch {
+        // Some browsers may not allow seeking until metadata
+        // has loaded. Pausing is still enough.
+    }
+
+    weddingAudio.volume =
+        MUSIC_TARGET_VOLUME;
+
+    syncMusicButton();
+}
+
+
+function startFixedWeddingExperienceTimer() {
+    experienceEndsAt =
+        performance.now()
+        +
+        EXPERIENCE_DURATION_MS;
+
+    if (musicFadeOutTimer) {
+        clearTimeout(
+            musicFadeOutTimer
+        );
+    }
+
+    if (musicStopTimer) {
+        clearTimeout(
+            musicStopTimer
+        );
+    }
+
+    // Start a gentle fade during the final 8 seconds.
+    musicFadeOutTimer =
+        setTimeout(
+            function () {
+                if (
+                    !weddingAudio.paused
+                ) {
+                    fadeMusicTo(
+                        0,
+                        MUSIC_FADE_OUT_MS
+                    );
+                }
+            },
+            Math.max(
+                0,
+                EXPERIENCE_DURATION_MS
+                -
+                MUSIC_FADE_OUT_MS
+            )
+        );
+
+    // At exactly 3:30, stop the song and finish the scroll.
+    musicStopTimer =
+        setTimeout(
+            finishWeddingExperience,
+            EXPERIENCE_DURATION_MS
+        );
+}
+
+
+// =========================================================
+// 11. AUTOMATIC SLOW SCROLL
 // =========================================================
 
 let autoScrollFrame = null;
@@ -840,31 +976,23 @@ let autoScrollStoppedByGuest = false;
 
 
 function getAutoScrollDurationMs() {
-    const songDurationSeconds =
-        Number(
-            weddingAudio.duration
-        );
-
+    // The scroll always uses the time remaining until the
+    // 3:30 experience end point. This keeps music and scroll
+    // synchronized even though scrolling begins after the cover.
     if (
         Number.isFinite(
-            songDurationSeconds
+            experienceEndsAt
         )
-        &&
-        songDurationSeconds > 60
     ) {
         return Math.max(
-            120000,
-            (
-                songDurationSeconds
-                *
-                1000
-            )
+            1000,
+            experienceEndsAt
             -
-            12000
+            performance.now()
         );
     }
 
-    return AUTO_SCROLL_FALLBACK_DURATION_MS;
+    return EXPERIENCE_DURATION_MS;
 }
 
 
@@ -1078,6 +1206,10 @@ window.addEventListener(
 openButton.addEventListener(
     "click",
     function () {
+        // Start the shared 3:30 clock immediately when the guest
+        // presses OPEN INVITATION.
+        startFixedWeddingExperienceTimer();
+
         startWeddingMusic();
 
         cover.classList.add(
@@ -1313,7 +1445,7 @@ addToCalendar.addEventListener(
     "click",
     function () {
         const calendarContent =
-            `BEGIN:VCALENDAR
+`BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Susini and Achila Wedding//EN
 CALSCALE:GREGORIAN
